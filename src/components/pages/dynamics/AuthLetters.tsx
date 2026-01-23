@@ -19,14 +19,9 @@ export default function AuthLetters() {
   // Check if PA has been filed (either via paFiled flag or localStorage submission)
   const isPAFiled = paStatus?.paFiled || (orderData ? localStorage.getItem(`pa-submission-${orderData.orderId}`) !== null : false)
 
-  // Get payer-specific auth letter path
-  const getAuthLetterPath = (payerName: string): string => {
-    const payerMap: Record<string, string> = {
-      'Aetna': '/documents/auth-letter-aetna.pdf',
-      'BCBS': '/documents/auth-letter-bcbs.pdf',
-      'Cigna': '/documents/auth-letter-cigna.pdf'
-    }
-    return payerMap[payerName] || '/documents/auth-letter-aetna.pdf'
+  // Get auth letter path (same document for all payers)
+  const getAuthLetterPath = (): string => {
+    return '/documents/auth-letter-aetna.pdf'
   }
 
   // Show auth letter for RAD-001 to RAD-004
@@ -41,7 +36,7 @@ export default function AuthLetters() {
 
   const handleViewAuthLetter = () => {
     if (orderData) {
-      const authLetterPath = getAuthLetterPath(orderData.payer.name)
+      const authLetterPath = getAuthLetterPath()
       setCurrentDocument({
         title: `${orderData.payer.name} Authorization Letter`,
         url: authLetterPath

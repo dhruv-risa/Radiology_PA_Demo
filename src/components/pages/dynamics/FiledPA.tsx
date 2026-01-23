@@ -2,6 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { getOrderByMRN } from '../../../utils/patientDataHelpers'
 import { useEffect, useState } from 'react'
 import DocumentModal from '../../common/DocumentModal'
+import { getIcdDescription } from '../../../utils/icdCodes'
 
 interface FiledPAData {
   orderId: string
@@ -63,8 +64,8 @@ export default function FiledPA() {
           formData: {
             diagnoses: orderData.order.diagnosisCodes?.map(code => ({
               icdCode: code,
-              icdDescription: `Clinical description for ${code}`
-            })) || [{ icdCode: 'R07.9', icdDescription: 'Chest pain, unspecified' }],
+              icdDescription: getIcdDescription(code)
+            })) || [{ icdCode: 'R07.9', icdDescription: getIcdDescription('R07.9') }],
             procedures: orderData.order.cptCodes?.map(code => ({
               codeDescription: orderData.order.imagingType,
               code: code,

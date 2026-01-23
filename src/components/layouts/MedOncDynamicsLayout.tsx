@@ -145,12 +145,12 @@ export default function MedOncDynamicsLayout() {
 
   const tabs = [
     { id: 'authorization', label: 'Authorization' },
+    ...(shouldShowIssuesTab() ? [{ id: 'issues', label: 'Issues' }] : []),
     { id: 'documents', label: 'Documents' },
     { id: 'workflow', label: 'Workflow' },
     { id: 'auth-letters', label: 'Auth Letters' },
     { id: 'business-office', label: 'Comments' },
     ...(shouldShowFiledPATab() ? [{ id: 'filed-pa', label: 'Filed PA' }] : []),
-    ...(shouldShowIssuesTab() ? [{ id: 'issues', label: 'Issues' }] : []),
   ]
 
   const currentTab = location.pathname.split('/').pop() || 'authorization'

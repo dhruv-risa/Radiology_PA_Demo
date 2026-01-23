@@ -10,7 +10,7 @@
       },
       "order": {
         "imagingType": "Bone DXA",
-        "imagingModality": "DXA",
+        "imagingModality": "Bone DXA",
         "cptCodes": [
           "77080"
         ],
@@ -851,7 +851,10 @@
           "70553"
         ],
         "diagnosisCodes": [
-          "G43.909"
+          "C79.51",
+          "C90.00",
+          "D47.2",
+          "C90.00"
         ],
         "dateOfService": "2026-02-25",
         "orderingProvider": {

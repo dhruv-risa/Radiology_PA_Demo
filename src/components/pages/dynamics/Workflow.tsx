@@ -437,12 +437,14 @@ export default function Workflow() {
         : isNAR || hasAuthOnFile || paStatus.AutomationWorkflow === 'Completed'
         ? 'Not Required'
         : eligibilityFailed || clinicalBlocked
-        ? 'Pending'
+        ? 'Blocked'
         : 'Pending',
       description: paSubmitted
         ? 'Monitoring authorization status for payer response'
         : isNAR || hasAuthOnFile || paStatus.AutomationWorkflow === 'Completed'
         ? 'Monitoring not required'
+        : eligibilityFailed || clinicalBlocked
+        ? 'Monitoring blocked pending authorization submission'
         : 'Monitoring will begin after submission',
       details: paSubmitted
         ? [
@@ -457,7 +459,7 @@ export default function Workflow() {
         : paStatus.AutomationWorkflow === 'Completed'
         ? ['Workflow completed - no monitoring required']
         : eligibilityFailed || clinicalBlocked
-        ? ['Monitoring will begin once authorization is submitted']
+        ? ['Monitoring cannot begin until authorization is submitted']
         : ['Monitoring will begin once authorization is submitted']
     })
 
@@ -504,7 +506,7 @@ export default function Workflow() {
       case 'Blocked':
       case 'Failed':
         return (
-          <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 24 24">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
           </svg>
         )
@@ -550,7 +552,11 @@ export default function Workflow() {
                 ref={step.id === 'auth-submission' ? authSubmissionRef : null}
               >
                 {/* Step marker */}
-                <div className="absolute left-0 flex items-center justify-center w-12 h-12 bg-white border-2 border-gray-200 rounded-full">
+                <div className={`absolute left-0 flex items-center justify-center w-12 h-12 bg-white rounded-full ${
+                  step.status === 'Blocked' || step.status === 'Failed'
+                    ? 'border-2 border-red-600'
+                    : 'border-2 border-gray-200'
+                }`}>
                   {getStatusIcon(step.status)}
                 </div>
 
@@ -689,7 +695,11 @@ export default function Workflow() {
                 ref={step.id === 'auth-submission' ? authSubmissionRef : null}
               >
                 {/* Step marker */}
-                <div className="absolute left-0 flex items-center justify-center w-12 h-12 bg-white border-2 border-gray-200 rounded-full">
+                <div className={`absolute left-0 flex items-center justify-center w-12 h-12 bg-white rounded-full ${
+                  step.status === 'Blocked' || step.status === 'Failed'
+                    ? 'border-2 border-red-600'
+                    : 'border-2 border-gray-200'
+                }`}>
                   {getStatusIcon(step.status)}
                 </div>
 

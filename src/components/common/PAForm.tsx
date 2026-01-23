@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { RadiologyPAOrder, Document } from '../../utils/patientDataHelpers'
+import { getIcdDescription } from '../../utils/icdCodes'
 
 export interface PAFormData {
   diagnoses: Array<{ icdCode: string; icdDescription: string }>
@@ -38,10 +39,10 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
     if (orderData.order.diagnosisCodes && orderData.order.diagnosisCodes.length > 0) {
       return orderData.order.diagnosisCodes.map(code => ({
         icdCode: code,
-        icdDescription: `Description for ${code}`
+        icdDescription: getIcdDescription(code)
       }))
     }
-    return [{ icdCode: 'G43.909', icdDescription: 'Migraine, unspecified, not intractable, without status migrainosus' }]
+    return [{ icdCode: 'G43.909', icdDescription: getIcdDescription('G43.909') }]
   })
 
   // Pre-fill procedures with data from orderData
