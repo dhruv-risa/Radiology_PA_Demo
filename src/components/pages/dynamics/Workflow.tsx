@@ -43,13 +43,14 @@ export default function Workflow() {
     const savedSubmission = localStorage.getItem(`pa-submission-${originalOrderData.orderId}`)
     if (savedSubmission) {
       const submissionData = JSON.parse(savedSubmission)
-      // Update order data to reflect submitted status
+      // Update order data with paFiled flag but keep auth status as Auth Required
       setOrderData({
         ...originalOrderData,
         paStatus: {
           ...originalOrderData.paStatus,
-          authStatus: 'PA Submitted',
-          automationStatus: 'In Progress'
+          authStatus: 'Auth Required',
+          automationStatus: 'In Progress',
+          paFiled: true
         },
         documents: submissionData.formData.attachments || originalOrderData.documents
       })
@@ -162,13 +163,14 @@ export default function Workflow() {
     }
     localStorage.setItem(`pa-submission-${orderData!.orderId}`, JSON.stringify(submissionData))
 
-    // Update order data to reflect submitted status
+    // Update order data with paFiled flag but keep auth status as Auth Required
     setOrderData({
       ...orderData!,
       paStatus: {
         ...orderData!.paStatus,
-        authStatus: 'PA Submitted',
-        automationStatus: 'In Progress'
+        authStatus: 'Auth Required',
+        automationStatus: 'In Progress',
+        paFiled: true
       },
       documents: formData!.attachments
     })
@@ -178,6 +180,8 @@ export default function Workflow() {
 
   const handleSuccessClose = () => {
     setPAFilingStep('idle')
+    // Navigate to Filed PA tab after successful submission
+    navigate(`/patient/${id}/dynamics/filed-pa`)
   }
 
   const handleFormClose = () => {
@@ -477,7 +481,7 @@ export default function Workflow() {
     }
   }, [shouldAutoExpandAll, steps.length])
 
-  const getStatusColor = (status: StepStatus) => {
+  const getStatusColor = (_status: StepStatus) => {
     return 'bg-gray-100 text-gray-700 border-gray-300'
   }
 

@@ -297,7 +297,7 @@
       "eligibilityVerification": {
         "serviceTypeCode": "78",
         "covered": true,
-        "priorAuthRequired": true,
+        "priorAuthRequired": false,
         "referralRequired": false,
         "financials": {
           "deductible": { "total": 0, "used": 0 },

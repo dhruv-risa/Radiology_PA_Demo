@@ -107,8 +107,9 @@ export const getAllOrders = (): RadiologyPAOrder[] => {
         ...order,
         paStatus: {
           ...order.paStatus,
-          authStatus: 'PA Submitted',
-          automationStatus: 'In Progress'
+          authStatus: 'Auth Required',
+          automationStatus: 'In Progress',
+          paFiled: true
         },
         documents: submissionData.formData?.attachments || order.documents
       }

@@ -133,6 +133,26 @@ export default function MedOncDynamicsLayout() {
     setIsMenuOpen(false)
   }
 
+  const getPayerNARGridPath = (payerName: string): string => {
+    // Map payer names to their NAR grid PDF files
+    const payerMap: Record<string, string> = {
+      'Aetna': '/documents/payer-guidelines-aetna.pdf',
+      'BCBS': '/documents/payer-guidelines-bcbs.pdf',
+      'Cigna': '/documents/payer-guidelines-cigna.pdf'
+    }
+    return payerMap[payerName] || '/documents/payer-guidelines-aetna.pdf'
+  }
+
+  const handleViewOncoEMR = () => {
+    window.open('https://secure92.oncoemr.com/nav/documents?PID=PD_064PKXCW006EF8B4GWX9&locationId=LH_066YFE5N557HFTWBQGZ3', '_blank')
+    setIsMenuOpen(false)
+  }
+
+  const handleViewNARGrid = () => {
+    const narGridPath = getPayerNARGridPath(payer.name)
+    openDocument(narGridPath, `${payer.name} NAR Grid`)
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-white border-b sticky top-0 z-10">
@@ -206,10 +226,7 @@ export default function MedOncDynamicsLayout() {
                 {isMenuOpen && (
                   <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
                     <button
-                      onClick={() => {
-                        setIsMenuOpen(false)
-                        alert('OncoEMR integration not configured')
-                      }}
+                      onClick={handleViewOncoEMR}
                       className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3"
                     >
                       <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -218,7 +235,7 @@ export default function MedOncDynamicsLayout() {
                       View in OncoEMR
                     </button>
                     <button
-                      onClick={() => openDocument('/documents/nar-grid.pdf', 'NAR Grid')}
+                      onClick={handleViewNARGrid}
                       className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3"
                     >
                       <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
