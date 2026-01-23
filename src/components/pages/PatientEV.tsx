@@ -52,14 +52,14 @@ export default function PatientEV() {
             <h1 className="text-lg font-semibold">{patient.name.toUpperCase()} ({patient.mrn})</h1>
           </div>
           <div className="flex gap-3">
-            <button className="px-4 py-2 text-sm text-blue-600 border border-blue-600 rounded hover:bg-blue-50">
+            <button className="px-3 py-1.5 text-sm text-blue-600 border border-blue-600 rounded hover:bg-blue-50">
               Validate
             </button>
-            <button className="px-4 py-2 text-sm text-red-600 border border-red-600 rounded hover:bg-red-50">
+            <button className="px-3 py-1.5 text-sm text-red-600 border border-red-600 rounded hover:bg-red-50">
               Report Inaccuracy
             </button>
-            <button className="p-2 hover:bg-gray-100 rounded">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button className="p-1.5 hover:bg-gray-100 rounded">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
             </button>
@@ -190,28 +190,28 @@ export default function PatientEV() {
               </div>
 
               {/* Deductible and Out-of-Pocket Max */}
-              <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-2 gap-3 mb-3">
                 {/* Deductible */}
-                <div className="border rounded-lg p-4">
-                  <div className="mb-4">
-                    <span className="font-medium text-sm">Deductible</span>
+                <div className="border rounded-lg p-3">
+                  <div className="mb-3">
+                    <span className="font-medium text-xs">Deductible</span>
                   </div>
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-3 gap-3">
                     <div>
-                      <div className="text-xs text-gray-500 mb-2">Total</div>
-                      <div className="font-semibold text-sm">
+                      <div className="text-xs text-gray-500 mb-1">Total</div>
+                      <div className="font-semibold text-[11px]">
                         ${eligibility.financials.deductible.total}
                       </div>
                     </div>
                     <div>
-                      <div className="text-xs text-gray-500 mb-2">Used</div>
-                      <div className="font-semibold text-sm">
+                      <div className="text-xs text-gray-500 mb-1">Used</div>
+                      <div className="font-semibold text-[11px]">
                         ${eligibility.financials.deductible.used}
                       </div>
                     </div>
                     <div>
-                      <div className="text-xs text-gray-500 mb-2">Remaining</div>
-                      <div className="font-semibold text-sm">
+                      <div className="text-xs text-gray-500 mb-1">Remaining</div>
+                      <div className="font-semibold text-[11px]">
                         ${deductibleRemaining}
                       </div>
                     </div>
@@ -219,26 +219,26 @@ export default function PatientEV() {
                 </div>
 
                 {/* Out-of-Pocket Max */}
-                <div className="border rounded-lg p-4">
-                  <div className="mb-4">
-                    <span className="font-medium text-sm">Out-of-Pocket Max</span>
+                <div className="border rounded-lg p-3">
+                  <div className="mb-3">
+                    <span className="font-medium text-xs">Out-of-Pocket Max</span>
                   </div>
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-3 gap-3">
                     <div>
-                      <div className="text-xs text-gray-500 mb-2">Total</div>
-                      <div className="font-semibold text-sm">
+                      <div className="text-xs text-gray-500 mb-1">Total</div>
+                      <div className="font-semibold text-[11px]">
                         ${eligibility.financials.outOfPocket.total}
                       </div>
                     </div>
                     <div>
-                      <div className="text-xs text-gray-500 mb-2">Used</div>
-                      <div className="font-semibold text-sm">
+                      <div className="text-xs text-gray-500 mb-1">Used</div>
+                      <div className="font-semibold text-[11px]">
                         ${eligibility.financials.outOfPocket.used}
                       </div>
                     </div>
                     <div>
-                      <div className="text-xs text-gray-500 mb-2">Remaining</div>
-                      <div className="font-semibold text-sm">
+                      <div className="text-xs text-gray-500 mb-1">Remaining</div>
+                      <div className="font-semibold text-[11px]">
                         ${outOfPocketRemaining}
                       </div>
                     </div>
@@ -247,18 +247,18 @@ export default function PatientEV() {
               </div>
 
               {/* Copay and Coinsurance */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="border rounded-lg p-4">
-                  <div className="mb-3">
-                    <span className="font-medium text-sm">Copay</span>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="border rounded-lg p-3">
+                  <div className="mb-2">
+                    <span className="font-medium text-xs">Copay</span>
                   </div>
-                  <div className="font-semibold text-sm">${eligibility.financials.copay}</div>
+                  <div className="font-semibold text-[11px]">${eligibility.financials.copay}</div>
                 </div>
-                <div className="border rounded-lg p-4">
-                  <div className="mb-3">
-                    <span className="font-medium text-sm">Coinsurance</span>
+                <div className="border rounded-lg p-3">
+                  <div className="mb-2">
+                    <span className="font-medium text-xs">Coinsurance</span>
                   </div>
-                  <div className="font-semibold text-sm">{eligibility.financials.coinsurance}</div>
+                  <div className="font-semibold text-[11px]">{eligibility.financials.coinsurance}</div>
                 </div>
               </div>
             </div>

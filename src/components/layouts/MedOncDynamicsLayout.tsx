@@ -65,6 +65,8 @@ export default function MedOncDynamicsLayout() {
   const [isDxCodesModalOpen, setIsDxCodesModalOpen] = useState(false)
   const [currentDocument, setCurrentDocument] = useState({ title: '', url: '' })
   const menuRef = useRef<HTMLDivElement>(null)
+  const [hasProcessingRequest, setHasProcessingRequest] = useState(false)
+  const [hasRpaTriggered, setHasRpaTriggered] = useState(false)
 
 
   if (!orderData) {
@@ -89,16 +91,42 @@ export default function MedOncDynamicsLayout() {
     }
   }, [isMenuOpen])
 
+  // Check for processing requests and RPA triggers
+  useEffect(() => {
+    if (orderData) {
+      const processingKey = `processing_request_${orderData.patient.mrn}`
+      const rpaKey = `rpa-triggered-${orderData.orderId}`
+
+      const checkStorage = () => {
+        setHasProcessingRequest(localStorage.getItem(processingKey) !== null)
+        setHasRpaTriggered(localStorage.getItem(rpaKey) !== null)
+      }
+
+      checkStorage()
+
+      // Listen for storage changes
+      window.addEventListener('storage', checkStorage)
+
+      // Also check periodically for changes in the same tab
+      const interval = setInterval(checkStorage, 500)
+
+      return () => {
+        window.removeEventListener('storage', checkStorage)
+        clearInterval(interval)
+      }
+    }
+  }, [orderData])
+
   const patient = orderData.patient
   const order = orderData.order
   const payer = orderData.payer
   const paStatus = orderData.paStatus
 
   const shouldShowIssuesTab = () => {
-    if (paStatus.automationStatus === 'Blocked') {
+    if (paStatus.AutomationWorkflow === 'Blocked') {
       return true
     }
-    return paStatus.authStatus === 'Queries'
+    return paStatus.authStatus === 'Query'
   }
 
   const shouldShowFiledPATab = () => {
@@ -120,7 +148,7 @@ export default function MedOncDynamicsLayout() {
     { id: 'documents', label: 'Documents' },
     { id: 'workflow', label: 'Workflow' },
     { id: 'auth-letters', label: 'Auth Letters' },
-    { id: 'business-office', label: 'Business Office' },
+    { id: 'business-office', label: 'Comments' },
     ...(shouldShowFiledPATab() ? [{ id: 'filed-pa', label: 'Filed PA' }] : []),
     ...(shouldShowIssuesTab() ? [{ id: 'issues', label: 'Issues' }] : []),
   ]
@@ -134,7 +162,32 @@ export default function MedOncDynamicsLayout() {
   }
 
   const getPayerNARGridPath = (payerName: string): string => {
-    // Map payer names to their NAR grid PDF files
+    // For BCBS, use CPT code-specific guideline screenshots
+    if (payerName === 'BCBS') {
+      const cptCodes = order.cptCodes || []
+
+      // Map CPT codes to BCBS NAR guideline screenshot files
+      const bcbsCptMap: Record<string, string> = {
+        '77080': '/documents/bcbs-nar-77080.png',
+        '70010': '/documents/bcbs-nar-70010.png',
+        '74160': '/documents/bcbs-nar-74160.png',
+        '74183': '/documents/bcbs-nar-74160.png',
+        '93306': '/documents/bcbs-nar-93306.png',
+        '73560': '/documents/bcbs-nar-73560.png'
+      }
+
+      // Return the screenshot for the first matching CPT code
+      for (const cptCode of cptCodes) {
+        if (bcbsCptMap[cptCode]) {
+          return bcbsCptMap[cptCode]
+        }
+      }
+
+      // Fallback to generic BCBS document if no CPT code matches
+      return '/documents/nar-grid-bcbs.pdf'
+    }
+
+    // Map payer names to their NAR grid PDF files for non-BCBS payers
     const payerMap: Record<string, string> = {
       'Aetna': '/documents/nar-grid-aetna.pdf',
       'BCBS': '/documents/nar-grid-bcbs.pdf',
@@ -160,7 +213,7 @@ export default function MedOncDynamicsLayout() {
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-3">
               <h1 className="text-xl font-semibold">{patient.name.toUpperCase()} ({patient.mrn})</h1>
-              {paStatus.automationStatus === 'Blocked' ? (
+              {paStatus.AutomationWorkflow === 'Blocked' ? (
                 <>
                   <span className="px-2.5 py-1 bg-red-50 text-red-600 text-xs font-medium rounded">
                     Auth Status: {paStatus.authStatus}
@@ -203,12 +256,12 @@ export default function MedOncDynamicsLayout() {
                 Coverage Status: {payer.status}
               </span>
               <span className={`px-2.5 py-1 text-xs font-medium rounded ${
-                paStatus.automationStatus === 'Completed' ? 'bg-green-50 text-green-700' :
-                paStatus.automationStatus === 'In Progress' ? 'bg-blue-50 text-blue-600' :
-                paStatus.automationStatus === 'Blocked' ? 'bg-red-50 text-red-600' :
+                paStatus.AutomationWorkflow === 'Completed' ? 'bg-green-50 text-green-700' :
+                paStatus.AutomationWorkflow === 'In Progress' ? 'bg-blue-50 text-blue-600' :
+                paStatus.AutomationWorkflow === 'Blocked' ? 'bg-red-50 text-red-600' :
                 'bg-gray-50 text-gray-700'
               }`}>
-                Autonomous workflow: {paStatus.automationStatus}
+                Automation Workflow: {paStatus.AutomationWorkflow}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -315,26 +368,47 @@ export default function MedOncDynamicsLayout() {
         </div>
       )}
 
-      {/* Queries Alert Banner */}
-      {paStatus.authStatus === 'Queries' && (
-        <div className="bg-gradient-to-r from-red-50 to-rose-50 border-b-2 border-red-200">
+      {/* Query Alert Banner */}
+      {paStatus.authStatus === 'Query' && (
+        <div className={`border-b-2 ${hasProcessingRequest || hasRpaTriggered ? 'bg-gradient-to-r from-blue-50 to-sky-50 border-blue-200' : 'bg-gradient-to-r from-red-50 to-rose-50 border-red-200'}`}>
           <div className="max-w-7xl mx-auto px-6 py-4">
             <div className="flex items-start gap-4">
               <div className="flex-shrink-0 mt-0.5">
-                <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
+                {hasProcessingRequest || hasRpaTriggered ? (
+                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                ) : (
+                  <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                )}
               </div>
               <div className="flex-1">
-                <h3 className="text-sm font-semibold text-red-900 mb-1">
-                  Issue Detected: {paStatus.issueType || 'Queries'}
-                </h3>
-                <p className="text-sm text-red-800">
-                  {paStatus.issueType === 'Clinical Missing' && 'Required clinical documentation is missing for this authorization. Please upload or request the necessary documents to proceed.'}
-                  {paStatus.issueType === 'Supporting Imaging Missing' && 'Required supporting imaging is missing for this authorization. Please upload or request the necessary imaging files to proceed.'}
-                  {paStatus.issueType === 'Invalid Dx Code' && 'One or more diagnosis codes are invalid or not supported for this authorization request. Please review and correct the diagnosis codes.'}
-                  {!paStatus.issueType && 'This authorization has queries that need to be resolved. Please review and address the issues to proceed.'}
-                </p>
+                {hasProcessingRequest || hasRpaTriggered ? (
+                  <>
+                    <h3 className="text-sm font-semibold text-blue-900 mb-1">
+                      {hasProcessingRequest ? 'Document Uploaded' : 'Request Issued'}
+                    </h3>
+                    <p className="text-sm text-blue-800">
+                      {hasProcessingRequest
+                        ? 'Document has been uploaded and is under review by the authorization team.'
+                        : 'Request has been sent to the provider via OncoEMR. Awaiting response.'}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <h3 className="text-sm font-semibold text-red-900 mb-1">
+                      Issue Detected: {paStatus.issueType || 'Query'}
+                    </h3>
+                    <p className="text-sm text-red-800">
+                      {paStatus.issueType === 'Clinical Missing' && 'Required clinical documentation is missing for this authorization. Please upload or request the necessary documents to proceed.'}
+                      {paStatus.issueType === 'Supporting Imaging Missing' && 'Required supporting imaging is missing for this authorization. Please upload or request the necessary imaging files to proceed.'}
+                      {paStatus.issueType === 'Invalid Dx Code' && 'One or more diagnosis codes are invalid or not supported for this authorization request. Please review and correct the diagnosis codes.'}
+                      {!paStatus.issueType && 'This authorization has queries that need to be resolved. Please review and address the issues to proceed.'}
+                    </p>
+                  </>
+                )}
               </div>
             </div>
           </div>

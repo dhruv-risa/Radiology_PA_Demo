@@ -69,7 +69,7 @@ export interface Financials {
 
 export interface PAStatus {
   authStatus: string
-  automationStatus: string
+  AutomationWorkflow: string
   issueType?: string
   paFiled?: boolean
 }
@@ -108,7 +108,7 @@ export const getAllOrders = (): RadiologyPAOrder[] => {
         paStatus: {
           ...order.paStatus,
           authStatus: 'Auth Required',
-          automationStatus: 'In Progress',
+          AutomationWorkflow: 'In Progress',
           paFiled: true
         },
         documents: submissionData.formData?.attachments || order.documents
@@ -161,7 +161,7 @@ export const getAllOrdersForTable = () => {
     payer: order.payer.name,
     dateOfService: order.order.dateOfService,
     authStatus: order.paStatus.authStatus,
-    automationStatus: order.paStatus.automationStatus,
+    AutomationWorkflow: order.paStatus.AutomationWorkflow,
     action: 'View'
   }))
 }

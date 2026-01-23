@@ -49,7 +49,7 @@ export default function Workflow() {
         paStatus: {
           ...originalOrderData.paStatus,
           authStatus: 'Auth Required',
-          automationStatus: 'In Progress',
+          AutomationWorkflow: 'In Progress',
           paFiled: true
         },
         documents: submissionData.formData.attachments || originalOrderData.documents
@@ -169,7 +169,7 @@ export default function Workflow() {
       paStatus: {
         ...orderData!.paStatus,
         authStatus: 'Auth Required',
-        automationStatus: 'In Progress',
+        AutomationWorkflow: 'In Progress',
         paFiled: true
       },
       documents: formData!.attachments
@@ -277,7 +277,7 @@ export default function Workflow() {
     })
 
     // Step 5: Clinical Readiness Validation
-    const clinicalBlocked = paStatus.authStatus === 'Queries'
+    const clinicalBlocked = paStatus.authStatus === 'Query'
     const missingDocs = documents?.filter(doc => doc.status === 'Not Available') || []
 
     steps.push({
@@ -332,7 +332,7 @@ export default function Workflow() {
         ? 'Not Required'
         : clinicalBlocked
         ? 'Blocked'
-        : paStatus.authStatus === 'PA Submitted' || paStatus.paFiled || paStatus.automationStatus === 'In Progress' || paOrdered
+        : paStatus.authStatus === 'PA Submitted' || paStatus.paFiled || paStatus.AutomationWorkflow === 'In Progress' || paOrdered
         ? 'Completed'
         : needsPreparation
         ? 'In Progress'
@@ -354,7 +354,7 @@ export default function Workflow() {
         ? ['Valid authorization already exists with payer']
         : clinicalBlocked
         ? ['Submission cannot be prepared until clinical documentation is complete']
-        : paStatus.authStatus === 'PA Submitted' || paStatus.paFiled || paStatus.automationStatus === 'In Progress' || paOrdered
+        : paStatus.authStatus === 'PA Submitted' || paStatus.paFiled || paStatus.AutomationWorkflow === 'In Progress' || paOrdered
         ? [
             'Required clinical documentation compiled',
             'Supporting imaging reports assembled',
@@ -386,7 +386,7 @@ export default function Workflow() {
         ? 'In Progress'
         : paOrdered
         ? 'Pending'
-        : paStatus.automationStatus === 'Completed'
+        : paStatus.AutomationWorkflow === 'Completed'
         ? 'Not Required'
         : 'Pending',
       description: eligibilityFailed
@@ -399,7 +399,7 @@ export default function Workflow() {
         ? 'Authorization submitted to payer'
         : paOrdered
         ? 'Ready to submit authorization to payer'
-        : paStatus.automationStatus === 'Completed'
+        : paStatus.AutomationWorkflow === 'Completed'
         ? 'Authorization submission not required for this case'
         : 'Authorization submission pending',
       details: eligibilityFailed
@@ -423,7 +423,7 @@ export default function Workflow() {
             'System will automatically submit to payer portal',
             'Submission can be initiated immediately'
           ]
-        : paStatus.automationStatus === 'Completed'
+        : paStatus.AutomationWorkflow === 'Completed'
         ? ['Authorization not required for this service']
         : ['Authorization submission will proceed once preparation is complete']
     })
@@ -434,14 +434,14 @@ export default function Workflow() {
       name: 'Post-Submission Monitoring',
       status: paSubmitted
         ? 'Active'
-        : isNAR || hasAuthOnFile || paStatus.automationStatus === 'Completed'
+        : isNAR || hasAuthOnFile || paStatus.AutomationWorkflow === 'Completed'
         ? 'Not Required'
         : eligibilityFailed || clinicalBlocked
         ? 'Pending'
         : 'Pending',
       description: paSubmitted
         ? 'Monitoring authorization status for payer response'
-        : isNAR || hasAuthOnFile || paStatus.automationStatus === 'Completed'
+        : isNAR || hasAuthOnFile || paStatus.AutomationWorkflow === 'Completed'
         ? 'Monitoring not required'
         : 'Monitoring will begin after submission',
       details: paSubmitted
@@ -454,7 +454,7 @@ export default function Workflow() {
         ? ['No authorization required - monitoring not applicable']
         : hasAuthOnFile
         ? ['Authorization already verified - monitoring not required']
-        : paStatus.automationStatus === 'Completed'
+        : paStatus.AutomationWorkflow === 'Completed'
         ? ['Workflow completed - no monitoring required']
         : eligibilityFailed || clinicalBlocked
         ? ['Monitoring will begin once authorization is submitted']
@@ -849,10 +849,10 @@ export default function Workflow() {
         {/* Show action button based on status - hide if marked complete */}
         {!isMarkedComplete && (
           <>
-            {(paStatus.authStatus === 'Queries' || paStatus.authStatus === 'Eligibility Failed') && (
+            {(paStatus.authStatus === 'Query' || paStatus.authStatus === 'Eligibility Failed') && (
               <button
                 onClick={() => navigate(`/patient/${id}/dynamics/issues`)}
-                className="px-6 py-2 text-sm bg-gray-700 text-white rounded hover:bg-gray-800 flex items-center gap-2"
+                className="px-6 py-2 text-sm bg-black text-white rounded hover:bg-gray-800 flex items-center gap-2"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />

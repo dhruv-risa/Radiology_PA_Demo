@@ -28,6 +28,9 @@ export default function DocumentModal({ isOpen, onClose, title, documentUrl }: D
 
   if (!isOpen) return null
 
+  // Check if the document is an image (PNG, JPG, JPEG, GIF, etc.)
+  const isImage = /\.(png|jpe?g|gif|webp|svg)$/i.test(documentUrl)
+
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
       {/* Backdrop */}
@@ -54,12 +57,22 @@ export default function DocumentModal({ isOpen, onClose, title, documentUrl }: D
           </div>
 
           {/* Content */}
-          <div className="flex-1 overflow-hidden bg-gray-100">
-            <iframe
-              src={documentUrl}
-              className="w-full h-full border-0"
-              title={title}
-            />
+          <div className="flex-1 overflow-auto bg-gray-100">
+            {isImage ? (
+              <div className="w-full h-full flex items-center justify-center p-4">
+                <img
+                  src={documentUrl}
+                  alt={title}
+                  className="max-w-full max-h-full object-contain"
+                />
+              </div>
+            ) : (
+              <iframe
+                src={documentUrl}
+                className="w-full h-full border-0"
+                title={title}
+              />
+            )}
           </div>
         </div>
       </div>

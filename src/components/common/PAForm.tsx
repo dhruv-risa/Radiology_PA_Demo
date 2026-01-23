@@ -196,7 +196,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
                 onClick={() => scrollToSection('patient')}
                 className={`w-full text-left px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
                   getSectionStatus('patient') === 'active'
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-gray-900 text-white'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
@@ -206,7 +206,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
                 onClick={() => scrollToSection('provider')}
                 className={`w-full text-left px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
                   getSectionStatus('provider') === 'active'
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-gray-900 text-white'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
@@ -216,7 +216,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
                 onClick={() => scrollToSection('diagnosis')}
                 className={`w-full text-left px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
                   getSectionStatus('diagnosis') === 'active'
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-gray-900 text-white'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
@@ -226,7 +226,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
                 onClick={() => scrollToSection('procedures')}
                 className={`w-full text-left px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
                   getSectionStatus('procedures') === 'active'
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-gray-900 text-white'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
@@ -236,7 +236,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
                 onClick={() => scrollToSection('attachments')}
                 className={`w-full text-left px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
                   getSectionStatus('attachments') === 'active'
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-gray-900 text-white'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
@@ -249,7 +249,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
           <div className="flex-1 overflow-y-auto pt-24 pb-24">
             <div className="px-8 py-6">
               {/* Aetna Header */}
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-6 py-4 mb-6">
+              <div className="bg-gray-50 border border-gray-200 rounded-lg px-6 py-4 mb-6">
                 <h2 className="text-lg font-bold text-gray-900">Aetna Patient Information Form</h2>
               </div>
 
@@ -267,7 +267,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
                       <input
                         type="text"
                         defaultValue={orderData.patient.memberId}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
                       />
                     </div>
                     <div>
@@ -290,7 +290,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
                       <input
                         type="text"
                         defaultValue={orderData.patient.name.split(' ')[0]}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
                       />
                     </div>
                     <div>
@@ -300,7 +300,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
                       <input
                         type="text"
                         defaultValue={orderData.patient.name.split(' ').slice(1).join(' ')}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
                       />
                     </div>
                   </div>
@@ -322,7 +322,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
                       <input
                         type="date"
                         defaultValue={orderData.patient.dob}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
                       />
                     </div>
                   </div>
@@ -343,7 +343,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
                       <input
                         type="text"
                         defaultValue={orderData.order.orderingProvider.name.split(' ')[0]}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
                       />
                     </div>
                     <div>
@@ -353,7 +353,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
                       <input
                         type="text"
                         defaultValue={orderData.order.orderingProvider.name.split(' ').slice(1).join(' ')}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
                       />
                     </div>
                   </div>
@@ -411,7 +411,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
                               value={diagnosis.icdCode}
                               onChange={(e) => updateDiagnosis(index, 'icdCode', e.target.value)}
                               placeholder="Enter text to search..."
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
                             />
                             <svg
                               className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
@@ -450,7 +450,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
                   ))}
                   <button
                     onClick={addDiagnosis}
-                    className="flex items-center gap-2 text-blue-600 hover:text-blue-700 text-sm font-medium"
+                    className="flex items-center gap-2 text-gray-700 hover:text-gray-900 text-sm font-medium"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -479,7 +479,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
                               type="text"
                               value={procedure.codeDescription}
                               onChange={(e) => updateProcedure(index, 'codeDescription', e.target.value)}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
                             />
                           </div>
                           <div>
@@ -490,7 +490,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
                               type="text"
                               value={procedure.code}
                               onChange={(e) => updateProcedure(index, 'code', e.target.value)}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
                             />
                           </div>
                         </div>
@@ -503,7 +503,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
                               type="text"
                               value={procedure.serviceQuantity}
                               onChange={(e) => updateProcedure(index, 'serviceQuantity', e.target.value)}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
                             />
                           </div>
                           <div>
@@ -513,7 +513,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
                             <select
                               value={procedure.serviceQuantityType}
                               onChange={(e) => updateProcedure(index, 'serviceQuantityType', e.target.value)}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
                             >
                               <option>Days</option>
                               <option>Visits</option>
@@ -537,7 +537,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
                   ))}
                   <button
                     onClick={addProcedure}
-                    className="flex items-center gap-2 text-blue-600 hover:text-blue-700 text-sm font-medium"
+                    className="flex items-center gap-2 text-gray-700 hover:text-gray-900 text-sm font-medium"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -587,7 +587,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
                   Attachments
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="flex items-center gap-2 px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-50 rounded-lg font-medium transition-colors"
+                    className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition-colors"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -599,7 +599,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
                   {attachments.map((doc, index) => (
                     <div key={doc.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 group relative">
                       <div className="flex items-center gap-3 flex-1">
-                        <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
                         <div className="flex-1">
@@ -611,7 +611,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
                         {doc.url && (
                           <button
                             onClick={() => viewDocument(doc)}
-                            className="flex items-center gap-2 px-3 py-1.5 text-sm text-blue-600 hover:text-blue-700 font-medium"
+                            className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:text-gray-900 font-medium"
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -639,7 +639,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
                       <p className="text-sm text-gray-500 mb-2">No attachments added</p>
                       <button
                         onClick={() => fileInputRef.current?.click()}
-                        className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                        className="text-sm text-gray-700 hover:text-gray-900 font-medium"
                       >
                         Add your first attachment
                       </button>

@@ -17,12 +17,18 @@ export default function Issues() {
 
   // State for modals
   const [showUploadModal, setShowUploadModal] = useState(false)
-  const [showRequestModal, setShowRequestModal] = useState(false)
   const [showUploadReviewModal, setShowUploadReviewModal] = useState(false)
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
 
   // State for tracking request submission
   const [processingRequest, setProcessingRequest] = useState<ProcessingRequest | null>(null)
+
+  // State for RPA trigger confirmation
+  const [rpaTriggered, setRpaTriggered] = useState<{
+    timestamp: string
+    providerName: string
+    providerNPI: string
+  } | null>(null)
 
   // Load processing request from localStorage on mount
   useEffect(() => {
@@ -38,6 +44,22 @@ export default function Issues() {
     }
   }, [id])
 
+  // Load RPA trigger status from localStorage
+  useEffect(() => {
+    if (orderData) {
+      const rpaStorageKey = `rpa-triggered-${orderData.orderId}`
+      const rpaStored = localStorage.getItem(rpaStorageKey)
+      if (rpaStored) {
+        try {
+          const data = JSON.parse(rpaStored)
+          setRpaTriggered(data)
+        } catch (error) {
+          console.error('Failed to parse RPA trigger status from localStorage', error)
+        }
+      }
+    }
+  }, [orderData])
+
   // Save processing request to localStorage
   const saveProcessingRequest = (request: ProcessingRequest) => {
     const storageKey = `processing_request_${id}`
@@ -52,6 +74,15 @@ export default function Issues() {
     setProcessingRequest(null)
   }
 
+  // Clear RPA trigger status from localStorage
+  const clearRpaTriggered = () => {
+    if (orderData) {
+      const rpaStorageKey = `rpa-triggered-${orderData.orderId}`
+      localStorage.removeItem(rpaStorageKey)
+      setRpaTriggered(null)
+    }
+  }
+
   if (!orderData) {
     return (
       <div className="text-center py-8">
@@ -64,7 +95,7 @@ export default function Issues() {
 
   const getIssueDetails = () => {
     const authStatus = paStatus.authStatus
-    const automationStatus = paStatus.automationStatus
+    const AutomationWorkflow = paStatus.AutomationWorkflow
     const issueType = paStatus.issueType || authStatus
 
     if (issueType === 'Clinical Missing' || authStatus === 'Clinical Missing') {
@@ -130,7 +161,7 @@ export default function Issues() {
       }
     }
 
-    if (automationStatus === 'Blocked' || authStatus === 'Queries') {
+    if (AutomationWorkflow === 'Blocked' || authStatus === 'Query') {
       return {
         title: issueType ? `Issue Detected: ${issueType}` : 'Automation Workflow Blocked',
         severity: 'Blocking',
@@ -200,8 +231,8 @@ export default function Issues() {
               ))}
             </div>
 
-            {/* Show Upload and Request buttons for all blocked issues */}
-            {(paStatus.automationStatus === 'Blocked' || paStatus.authStatus === 'Queries') && !processingRequest && (
+            {/* Show Upload and Request buttons for all blocked issues - hide if any request is processed */}
+            {(paStatus.AutomationWorkflow === 'Blocked' || paStatus.authStatus === 'Query') && !processingRequest && !rpaTriggered && (
               <div className="mt-6 pt-6 border-t border-gray-200">
                 <div className="flex gap-3">
                   <button
@@ -214,7 +245,7 @@ export default function Issues() {
                     Upload Relevant Document
                   </button>
                   <button
-                    onClick={() => setShowRequestModal(true)}
+                    onClick={() => navigate(`/patient/${id}/dynamics/business-office?triggerRPA=true`)}
                     className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-300 text-gray-700 text-sm font-medium rounded hover:bg-gray-50"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -226,8 +257,8 @@ export default function Issues() {
               </div>
             )}
 
-            {/* Show status after request has been submitted */}
-            {(paStatus.automationStatus === 'Blocked' || paStatus.authStatus === 'Queries') && processingRequest && (
+            {/* Show status after document has been uploaded */}
+            {(paStatus.AutomationWorkflow === 'Blocked' || paStatus.authStatus === 'Query') && processingRequest && processingRequest.type === 'upload' && (
               <div className="mt-6 pt-6 border-t border-gray-200">
                 <div className="border border-gray-200 rounded-lg p-5">
                   <div className="flex items-start gap-4 mb-4">
@@ -240,12 +271,10 @@ export default function Issues() {
                     </div>
                     <div className="flex-1">
                       <h4 className="text-base font-semibold text-gray-900 mb-1">
-                        {processingRequest.type === 'upload' ? 'Document Uploaded Successfully' : 'Request Sent to Provider'}
+                        Document Uploaded Successfully
                       </h4>
                       <p className="text-sm text-gray-600 mb-2">
-                        {processingRequest.type === 'upload'
-                          ? 'Your document has been uploaded and is being reviewed by the authorization team.'
-                          : 'The provider has been notified and will provide the requested documentation.'}
+                        Your document has been uploaded and is being reviewed by the authorization team.
                       </p>
                       <p className="text-xs text-gray-500">
                         Submitted on {new Date(processingRequest.timestamp).toLocaleString('en-US')}
@@ -254,7 +283,7 @@ export default function Issues() {
                   </div>
 
                   {/* Document Preview for Upload */}
-                  {processingRequest.type === 'upload' && processingRequest.fileName && (
+                  {processingRequest.fileName && (
                     <div className="border border-gray-200 rounded-lg p-4 mt-4">
                       <h5 className="text-sm font-semibold text-gray-900 mb-3">Uploaded Document</h5>
                       <div className="space-y-2">
@@ -278,6 +307,55 @@ export default function Issues() {
 
                   <button
                     onClick={clearProcessingRequest}
+                    className="mt-4 w-full px-4 py-2 text-sm text-gray-700 border border-gray-300 rounded hover:bg-gray-50"
+                  >
+                    Clear Status
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Show RPA trigger confirmation */}
+            {(paStatus.AutomationWorkflow === 'Blocked' || paStatus.authStatus === 'Query') && rpaTriggered && (
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <div className="border border-gray-200 rounded-lg p-5">
+                  <div className="flex items-start gap-4 mb-4">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                        <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-base font-semibold text-gray-900 mb-1">
+                        Request Sent to OncoEMR
+                      </h4>
+                      <p className="text-sm text-gray-600 mb-2">
+                        Your request for additional documentation has been successfully sent to the provider via OncoEMR.
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Sent on {new Date(rpaTriggered.timestamp).toLocaleString('en-US')}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="border border-gray-200 rounded-lg p-4 mt-4">
+                    <h5 className="text-sm font-semibold text-gray-900 mb-3">Provider Information</h5>
+                    <div className="space-y-2">
+                      <div className="flex text-sm">
+                        <span className="text-gray-600 w-32">Provider Name:</span>
+                        <span className="font-medium text-gray-900">{rpaTriggered.providerName}</span>
+                      </div>
+                      <div className="flex text-sm">
+                        <span className="text-gray-600 w-32">NPI Code:</span>
+                        <span className="font-medium text-gray-900">{rpaTriggered.providerNPI}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={clearRpaTriggered}
                     className="mt-4 w-full px-4 py-2 text-sm text-gray-700 border border-gray-300 rounded hover:bg-gray-50"
                   >
                     Clear Status
@@ -447,61 +525,6 @@ export default function Issues() {
         </div>
       )}
 
-      {/* Request Document Modal */}
-      {showRequestModal && orderData && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900">Request Document from Provider</h3>
-            </div>
-            <div className="px-6 py-5">
-              <div className="space-y-4">
-                <div className="border border-gray-200 rounded-lg p-4">
-                  <div className="flex items-start gap-3">
-                    <svg className="w-6 h-6 text-gray-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900 mb-1">Request Submitted</p>
-                      <p className="text-sm text-gray-600">
-                        The request has been raised to the provider.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="border border-gray-200 rounded-lg p-4">
-                  <h4 className="text-sm font-semibold text-gray-900 mb-3">Provider Information</h4>
-                  <div className="space-y-2">
-                    <div className="flex text-sm">
-                      <span className="text-gray-600 w-32">Provider Name:</span>
-                      <span className="font-medium text-gray-900">{orderData.order.orderingProvider.name}</span>
-                    </div>
-                    <div className="flex text-sm">
-                      <span className="text-gray-600 w-32">NPI Code:</span>
-                      <span className="font-medium text-gray-900">{orderData.order.orderingProvider.npi}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end rounded-b-lg">
-              <button
-                onClick={() => {
-                  saveProcessingRequest({
-                    type: 'request',
-                    timestamp: new Date().toISOString()
-                  })
-                  setShowRequestModal(false)
-                }}
-                className="px-6 py-2 text-sm bg-black text-white rounded hover:bg-gray-800"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

@@ -28,7 +28,7 @@ export default function PAOrders() {
       case 'Auth Required':
       case 'PA Ordered':
         return 'bg-orange-100 text-orange-700'
-      case 'Queries':
+      case 'Query':
         return 'bg-red-100 text-red-700'
       case 'PA Submitted':
         return 'bg-yellow-100 text-yellow-700'
@@ -69,15 +69,15 @@ export default function PAOrders() {
     ).length
 
     const blockedCount = allOrders.filter(order =>
-      order.paStatus.automationStatus === 'Blocked'
+      order.paStatus.AutomationWorkflow === 'Blocked'
     ).length
 
     const inProgressCount = allOrders.filter(order =>
-      order.paStatus.automationStatus === 'In Progress'
+      order.paStatus.AutomationWorkflow === 'In Progress'
     ).length
 
     const ordersRemaining = allOrders.filter(order =>
-      order.paStatus.automationStatus !== 'Completed'
+      order.paStatus.AutomationWorkflow !== 'Completed'
     ).length
 
     return {
@@ -123,8 +123,8 @@ export default function PAOrders() {
       },
       {
         step: 'Document Collection',
-        status: selectedOrder.paStatus.automationStatus === 'Blocked' ? 'blocked' : 'completed',
-        description: selectedOrder.paStatus.automationStatus === 'Blocked'
+        status: selectedOrder.paStatus.AutomationWorkflow === 'Blocked' ? 'blocked' : 'completed',
+        description: selectedOrder.paStatus.AutomationWorkflow === 'Blocked'
           ? `Missing requirements: ${selectedOrder.paStatus.issueType || selectedOrder.paStatus.authStatus}`
           : 'All documents collected',
         timestamp: selectedOrder.order.dateOfService
@@ -192,9 +192,9 @@ export default function PAOrders() {
                 </span>
               </div>
               <div>
-                <span className="text-xs text-gray-500 block mb-1">Automation Status</span>
-                <span className={`inline-flex px-2.5 py-1 text-xs font-medium rounded ${getAutomationStatusColor(selectedOrder.paStatus.automationStatus)}`}>
-                  {selectedOrder.paStatus.automationStatus}
+                <span className="text-xs text-gray-500 block mb-1">Automation Workflow</span>
+                <span className={`inline-flex px-2.5 py-1 text-xs font-medium rounded ${getAutomationStatusColor(selectedOrder.paStatus.AutomationWorkflow)}`}>
+                  {selectedOrder.paStatus.AutomationWorkflow}
                 </span>
               </div>
             </div>
@@ -376,7 +376,7 @@ export default function PAOrders() {
                 <th className="text-left px-4 py-3 font-medium text-gray-700">Payer ↓</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-700">Date of Service ↓</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-700">Auth Status ↓</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-700">Automation Status ↓</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-700">Automation Workflow ↓</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-700">Action</th>
               </tr>
             </thead>
@@ -417,8 +417,8 @@ export default function PAOrders() {
                     </span>
                   </td>
                   <td className="px-4 py-3" onClick={() => handlePatientClick(order.mrn)}>
-                    <span className={`px-2 py-1 text-xs rounded ${getAutomationStatusColor(order.automationStatus)}`}>
-                      {order.automationStatus}
+                    <span className={`px-2 py-1 text-xs rounded ${getAutomationStatusColor(order.AutomationWorkflow)}`}>
+                      {order.AutomationWorkflow}
                     </span>
                   </td>
                   <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>

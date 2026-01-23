@@ -57,8 +57,8 @@ export default function PALoadingScreen({ isOpen, onComplete }: PALoadingScreenP
     <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
       <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4">
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
-            <svg className="w-8 h-8 text-blue-600 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
+            <svg className="w-8 h-8 text-gray-900 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
           </div>
@@ -76,13 +76,13 @@ export default function PALoadingScreen({ isOpen, onComplete }: PALoadingScreenP
                 key={index}
                 className={`flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ${
                   isCompleted ? 'bg-green-50' :
-                  isCurrent ? 'bg-blue-50' :
+                  isCurrent ? 'bg-gray-100' :
                   'bg-gray-50'
                 }`}
               >
                 <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 ${
                   isCompleted ? 'bg-green-500' :
-                  isCurrent ? 'bg-blue-500' :
+                  isCurrent ? 'bg-gray-900' :
                   'bg-gray-300'
                 }`}>
                   {isCompleted ? (
@@ -97,7 +97,7 @@ export default function PALoadingScreen({ isOpen, onComplete }: PALoadingScreenP
                 </div>
                 <span className={`text-sm font-medium transition-all duration-300 ${
                   isCompleted ? 'text-green-700' :
-                  isCurrent ? 'text-blue-700' :
+                  isCurrent ? 'text-gray-900' :
                   'text-gray-500'
                 }`}>
                   {step.text}
@@ -114,7 +114,7 @@ export default function PALoadingScreen({ isOpen, onComplete }: PALoadingScreenP
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
             <div
-              className="bg-blue-600 h-full transition-all duration-500 ease-out"
+              className="bg-gray-900 h-full transition-all duration-500 ease-out"
               style={{ width: `${(completedSteps.length / loadingSteps.length) * 100}%` }}
             ></div>
           </div>

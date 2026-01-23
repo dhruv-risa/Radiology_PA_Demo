@@ -28,7 +28,7 @@ The **single source of truth** for all patient data. This global JSON file conta
           "cptCodes": ["string"],
           "dateOfService": "YYYY-MM-DD",
           "authStatus": "string",
-          "automationStatus": "string",
+          "AutomationWorkflow": "string",
           "payer": {
             "name": "string",
             "memberId": "string",

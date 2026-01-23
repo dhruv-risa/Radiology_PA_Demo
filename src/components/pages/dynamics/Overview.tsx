@@ -31,7 +31,7 @@ export default function Overview() {
 
   // Generate last system action message
   const getLastSystemAction = () => {
-    if (paStatus.automationStatus === 'Completed') {
+    if (paStatus.AutomationWorkflow === 'Completed') {
       if (paStatus.authStatus === 'NAR') {
         return 'Authorization check completed - No authorization required'
       }
@@ -39,10 +39,10 @@ export default function Overview() {
         return 'Authorization verified - Valid authorization on file'
       }
     }
-    if (paStatus.automationStatus === 'In Progress') {
+    if (paStatus.AutomationWorkflow === 'In Progress') {
       return 'Prior authorization submitted, awaiting payer response'
     }
-    if (paStatus.automationStatus === 'Blocked') {
+    if (paStatus.AutomationWorkflow === 'Blocked') {
       return `Automation paused - ${paStatus.authStatus}`
     }
     return 'Eligibility verification completed'
@@ -120,8 +120,8 @@ export default function Overview() {
           <div className="space-y-3">
             <div>
               <div className="text-[10px] text-gray-500 mb-1.5">Automation Status</div>
-              <span className={`inline-block px-2 py-0.5 text-[10px] font-medium rounded ${getAutomationStatusColor(paStatus.automationStatus)}`}>
-                {paStatus.automationStatus}
+              <span className={`inline-block px-2 py-0.5 text-[10px] font-medium rounded ${getAutomationStatusColor(paStatus.AutomationWorkflow)}`}>
+                {paStatus.AutomationWorkflow}
               </span>
             </div>
             <div className="pt-1.5 border-t">
@@ -148,12 +148,12 @@ export default function Overview() {
               <span className="text-[10px] text-gray-700">Authorization Checked</span>
             </div>
             <div className="flex items-center gap-2">
-              {paStatus.automationStatus === 'Completed' ? (
+              {paStatus.AutomationWorkflow === 'Completed' ? (
                 <>
                   <span className="text-green-600 font-semibold text-xs">✓</span>
                   <span className="text-[10px] text-gray-700">Validation Completed</span>
                 </>
-              ) : paStatus.automationStatus === 'Blocked' ? (
+              ) : paStatus.AutomationWorkflow === 'Blocked' ? (
                 <>
                   <span className="text-red-600 font-semibold text-xs">✗</span>
                   <span className="text-[10px] text-gray-700">Validation Blocked</span>
