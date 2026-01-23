@@ -3,18 +3,37 @@ import { getOrderByMRN } from '../../utils/patientDataHelpers'
 import { useState, useRef, useEffect } from 'react'
 import DocumentModal from '../common/DocumentModal'
 
+interface DiagnosisCode {
+  code?: string
+  description?: string
+}
+
 interface DxCodesModalProps {
   isOpen: boolean
   onClose: () => void
-  diagnosisCodes: string[]
+  diagnosisCodes: (string | DiagnosisCode)[]
+  dateOfService: string
 }
 
-function DxCodesModal({ isOpen, onClose, diagnosisCodes }: DxCodesModalProps) {
+// ICD-10 code descriptions mapping
+const icd10Descriptions: Record<string, string> = {
+  'M81.0': 'Age-related osteoporosis without current pathological fracture',
+  'Z79.83': 'Long term (current) use of bisphosphonates',
+  'C50.919': 'Malignant neoplasm of unspecified site of unspecified female breast',
+  'Z85.3': 'Personal history of malignant neoplasm of breast',
+  'I10': 'Essential (primary) hypertension',
+  'E11.9': 'Type 2 diabetes mellitus without complications',
+  'M25.561': 'Pain in right knee',
+  'M17.11': 'Unilateral primary osteoarthritis, right knee',
+  'C90.00': 'Multiple myeloma not having achieved remission',
+}
+
+function DxCodesModal({ isOpen, onClose, diagnosisCodes, dateOfService }: DxCodesModalProps) {
   if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+      <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full mx-4">
         <div className="flex items-center justify-between p-4 border-b">
           <h3 className="text-lg font-semibold text-gray-900">Diagnosis Codes</h3>
           <button
@@ -28,15 +47,45 @@ function DxCodesModal({ isOpen, onClose, diagnosisCodes }: DxCodesModalProps) {
         </div>
         <div className="p-4">
           {diagnosisCodes && diagnosisCodes.length > 0 ? (
-            <div className="space-y-2">
-              {diagnosisCodes.map((code, index) => (
-                <div key={index} className="flex items-center gap-2 p-2 bg-gray-50 rounded">
-                  <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  <span className="font-mono font-semibold text-gray-900">{code}</span>
-                </div>
-              ))}
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Date Added
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Dx Code
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Description
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {diagnosisCodes.map((codeEntry, index) => {
+                    // Handle both string format and object format
+                    const codeValue = typeof codeEntry === 'string' ? codeEntry : (codeEntry as DiagnosisCode).code || ''
+                    const description = typeof codeEntry === 'string'
+                      ? icd10Descriptions[codeEntry] || 'Description not available'
+                      : (codeEntry as DiagnosisCode).description || icd10Descriptions[codeValue] || 'Description not available'
+
+                    return (
+                      <tr key={index} className="hover:bg-gray-50">
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                          {new Date(dateOfService).toLocaleDateString('en-US')}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm font-mono font-semibold text-gray-900">
+                          {codeValue}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-700">
+                          {description}
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
             </div>
           ) : (
             <p className="text-gray-500 text-sm">No diagnosis codes available</p>
@@ -206,6 +255,10 @@ export default function MedOncDynamicsLayout() {
     openDocument(narGridPath, `${payer.name} NAR Grid`)
   }
 
+  const handleViewGuideline = () => {
+    openDocument('/documents/Guideline.pdf', 'Clinical Guidelines')
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-white border-b sticky top-0 z-10">
@@ -295,6 +348,15 @@ export default function MedOncDynamicsLayout() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                       </svg>
                       View NAR Grid
+                    </button>
+                    <button
+                      onClick={handleViewGuideline}
+                      className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3"
+                    >
+                      <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      View Guidelines
                     </button>
                     <button
                       onClick={() => {
@@ -431,6 +493,7 @@ export default function MedOncDynamicsLayout() {
         isOpen={isDxCodesModalOpen}
         onClose={() => setIsDxCodesModalOpen(false)}
         diagnosisCodes={order.diagnosisCodes || []}
+        dateOfService={order.dateOfService}
       />
     </div>
   )

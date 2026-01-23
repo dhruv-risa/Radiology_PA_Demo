@@ -1,10 +1,14 @@
 import { useNavigate, useParams } from 'react-router-dom'
 import { getOrderByMRN } from '../../../utils/patientDataHelpers'
+import { useState } from 'react'
+import DocumentModal from '../../common/DocumentModal'
 
 export default function Authorization() {
   const navigate = useNavigate()
   const { id } = useParams()
   const orderData = getOrderByMRN(id!)
+  const [isDocumentModalOpen, setIsDocumentModalOpen] = useState(false)
+  const [currentDocument, setCurrentDocument] = useState({ title: '', url: '' })
 
   if (!orderData) {
     return (
@@ -333,6 +337,20 @@ export default function Authorization() {
   const showAuthorizationDetails = paStatus.authStatus === 'Auth on File'
   const submissionStatus = getSubmissionStatus()
 
+  const getFiledPAScreenshot = () => {
+    // For RAD-008 and RAD-009, show the actual Filed_PA.pdf
+    if (orderData && (orderData.orderId === 'RAD-008' || orderData.orderId === 'RAD-009')) {
+      return '/documents/Filed_PA.pdf'
+    }
+    // Using placeholder image for other patients
+    return '/documents/NAR_SS.png'
+  }
+
+  const openDocument = (documentPath: string, title: string) => {
+    setCurrentDocument({ title, url: documentPath })
+    setIsDocumentModalOpen(true)
+  }
+
   return (
     <div className="pb-24">
       <div className="max-w-4xl mx-auto">
@@ -390,13 +408,27 @@ export default function Authorization() {
           <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Submission & Payer Response</h3>
           <div className="space-y-3">
             <div className="border rounded-lg p-3">
-              <div className="flex items-center justify-between">
+              <div className="grid grid-cols-3 gap-4">
                 <div>
                   <div className="text-xs text-gray-500 font-medium mb-1">Submission Status</div>
-                  <div>{getSubmissionStatusBadge(submissionStatus)}</div>
+                  <div className="inline-block">{getSubmissionStatusBadge(submissionStatus)}</div>
                 </div>
+                {paStatus.paFiled && (
+                  <div>
+                    <div className="text-xs text-gray-500 font-medium mb-1">Filed PA</div>
+                    <button
+                      onClick={() => openDocument(getFiledPAScreenshot(), 'PA Filed by Agent')}
+                      className="px-3 py-1.5 text-xs bg-gray-900 text-white rounded hover:bg-gray-800 flex items-center gap-1.5"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      View PA Filed by Agent
+                    </button>
+                  </div>
+                )}
                 {(paStatus.authStatus === 'PA Submitted' || paStatus.paFiled) && (
-                  <div className="text-right">
+                  <div>
                     <div className="text-xs text-gray-500 font-medium mb-1">Authorization Number</div>
                     <div className="text-sm font-mono font-semibold text-gray-900">
                       {localStorage.getItem(`auth-number-${orderData.orderId}`) || `AUTH-${Date.now()}`}
@@ -443,7 +475,7 @@ export default function Authorization() {
             )}
             {['Auth Required', 'PA Ordered'].includes(paStatus.authStatus) && !paStatus.paFiled && (
               <button
-                onClick={() => navigate(`/patient/${id}/dynamics/workflow`)}
+                onClick={() => navigate(`/patient/${id}/dynamics/workflow`, { state: { autoStartFiling: true } })}
                 className="px-6 py-2 text-sm bg-black text-white rounded hover:bg-gray-800 flex items-center gap-2"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -466,6 +498,13 @@ export default function Authorization() {
           </>
         )}
       </div>
+
+      <DocumentModal
+        isOpen={isDocumentModalOpen}
+        onClose={() => setIsDocumentModalOpen(false)}
+        title={currentDocument.title}
+        documentUrl={currentDocument.url}
+      />
     </div>
   )
 }

@@ -11,6 +11,7 @@ import Workflow from './components/pages/dynamics/Workflow'
 import Authorization from './components/pages/dynamics/Authorization'
 import FiledPA from './components/pages/dynamics/FiledPA'
 import BusinessOffice from './components/pages/dynamics/BusinessOffice'
+import PAFormWithGuidelines from './components/pages/PAFormWithGuidelines'
 
 function App() {
   return (
@@ -21,6 +22,9 @@ function App() {
 
         {/* Patient EV Screen */}
         <Route path="/patient/:id/ev" element={<PatientEV />} />
+
+        {/* PA Form with Guidelines */}
+        <Route path="/patient/:id/pa-form-guidelines" element={<PAFormWithGuidelines />} />
 
         {/* Patient Detail Routes with Tabs */}
         <Route path="/patient/:id" element={<MedOncPatientLayout />}>

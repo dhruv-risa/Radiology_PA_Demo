@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import { getOrderByMRN } from '../../../utils/patientDataHelpers'
 import { useState, useEffect, useRef } from 'react'
 import PAForm, { PAFormData } from '../../common/PAForm'
@@ -21,6 +21,7 @@ type PAFilingStep = 'idle' | 'loading' | 'form' | 'preview' | 'success'
 
 export default function Workflow() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { id } = useParams()
   const originalOrderData = getOrderByMRN(id!)
   const [orderData, setOrderData] = useState(originalOrderData)
@@ -117,6 +118,51 @@ export default function Workflow() {
       }, 100)
     }
   }, [paStatus.authStatus, isPAFiled])
+
+  // Auto-start filing process when navigating from Authorization page or reopening from guidelines
+  useEffect(() => {
+    const state = location.state as {
+      autoStartFiling?: boolean
+      reopenPAForm?: boolean
+      continueFromGuidelines?: boolean
+      formData?: PAFormData
+    }
+
+    // Handle continuing from guidelines page (show preview)
+    if (state?.continueFromGuidelines && state.formData) {
+      // Clear the state to prevent re-triggering
+      navigate(location.pathname, { replace: true, state: {} })
+
+      // Set form data and show preview
+      setFormData(state.formData)
+      setPAFilingStep('preview')
+      return
+    }
+
+    // Handle reopening PA form when returning from guidelines page
+    if (state?.reopenPAForm && paFilingStep === 'idle') {
+      // Clear the state to prevent re-triggering
+      navigate(location.pathname, { replace: true, state: {} })
+
+      // Reopen the form with saved data
+      if (state.formData) {
+        setFormData(state.formData)
+      }
+      setPAFilingStep('form')
+      return
+    }
+
+    // Handle auto-start filing from Authorization page
+    if (state?.autoStartFiling && !isPAFiled && paFilingStep === 'idle') {
+      // Clear the state to prevent re-triggering
+      navigate(location.pathname, { replace: true, state: {} })
+
+      // Auto-start filing with a slight delay for smooth UX
+      setTimeout(() => {
+        handleFilePAClick()
+      }, 500)
+    }
+  }, [location, isPAFiled, paFilingStep, navigate])
 
   const toggleStep = (stepId: string) => {
     setExpandedSteps(prev => ({

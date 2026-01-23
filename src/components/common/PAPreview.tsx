@@ -21,7 +21,7 @@ export default function PAPreview({ isOpen, onClose, onSubmit, orderData, formDa
 
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between z-10">
           <div>
@@ -41,7 +41,7 @@ export default function PAPreview({ isOpen, onClose, onSubmit, orderData, formDa
         {/* Content */}
         <div className="p-6 space-y-6">
           {/* Aetna Header */}
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-6 py-4">
+          <div className="bg-gray-50 border border-gray-200 rounded-lg px-6 py-4">
             <h3 className="text-lg font-bold text-gray-900">Aetna Patient Information Form</h3>
             <p className="text-sm text-gray-600 mt-1">Prior Authorization Request Summary</p>
           </div>
@@ -202,8 +202,8 @@ export default function PAPreview({ isOpen, onClose, onSubmit, orderData, formDa
           </div>
 
           {/* Payer Information */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-            <h4 className="text-sm font-bold text-gray-900 mb-4 pb-2 border-b border-blue-200">Submission Details</h4>
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
+            <h4 className="text-sm font-bold text-gray-900 mb-4 pb-2 border-b border-gray-200">Submission Details</h4>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <div className="text-xs text-gray-500 mb-1">Payer Name</div>
@@ -231,7 +231,7 @@ export default function PAPreview({ isOpen, onClose, onSubmit, orderData, formDa
           </button>
           <button
             onClick={onSubmit}
-            className="px-6 py-2.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            className="px-6 py-2.5 text-sm font-medium bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center gap-2"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />

@@ -40,6 +40,8 @@ export default function BusinessOffice() {
   const [entries, setEntries] = useState<BusinessOfficeEntry[]>([])
   const [isTriggerModalOpen, setIsTriggerModalOpen] = useState(false)
   const [triggerSuccess, setTriggerSuccess] = useState(false)
+  const [rpaTriggered, setRpaTriggered] = useState(false)
+  const [isScreenshotModalOpen, setIsScreenshotModalOpen] = useState(false)
 
   // Check for triggerRPA query parameter and auto-trigger the modal
   useEffect(() => {
@@ -54,6 +56,14 @@ export default function BusinessOffice() {
     }
   }, [searchParams, setSearchParams])
 
+  // Check if RPA has been triggered for this order
+  useEffect(() => {
+    if (orderData) {
+      const triggered = localStorage.getItem(`rpa-triggered-${orderData.orderId}`)
+      setRpaTriggered(triggered !== null)
+    }
+  }, [orderData])
+
   useEffect(() => {
     if (orderData) {
       // Clear localStorage to see fresh changes
@@ -64,46 +74,90 @@ export default function BusinessOffice() {
         // Transform existing data to new format
         const transformedEntries = orderData.businessOffice.entries.map(entry => {
           const isNAR = orderData.paStatus.authStatus === 'NAR'
+          const isAuthOnFile = orderData.paStatus.authStatus === 'Auth on File'
           const dos = new Date(orderData.order.dateOfService).toLocaleDateString('en-US')
+          const today = new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })
 
           // Extract basic info for left box (without Initials)
           const basicInfo = isNAR
             ? `Date: ${entry.date}\nDOS: ${dos}\n\nRequired Auth`
             : `Date: ${entry.date}\nDOS: ${dos}`
 
-          // Extract major info - what happened and when
-          const detailsText = entry.detailsText || ''
+          // Build major info based on auth status
           let majorInfo = ''
+          let radioButtonStatus = 'Required'
 
-          // Build major info showing what happened and when
-          if (detailsText.includes('As per Insurance')) {
-            // Extract insurance info and events
-            const lines = detailsText.split('\n')
-            const relevantLines = lines.filter(line =>
-              line.includes('As per Insurance') ||
-              line.includes('Auth status') ||
-              line.includes('Verified') ||
-              line.includes(entry.date.split('/')[1] + '/') // Find lines with dates
-            )
-            majorInfo = relevantLines.join('\n')
+          if (isNAR) {
+            // Format for NAR: Authmate Case, Date EV, Insurance info, Procedure - No Auth Required - Dx codes
+            const effectiveDate = new Date(orderData.payer.effectiveDate).toLocaleDateString('en-US')
+            const imagingType = orderData.order.imagingType || 'Procedure'
+            const cptCodes = orderData.order.cptCodes?.join(', ') || ''
+            const diagnosisCodes = orderData.order.diagnosisCodes?.join(', ') || ''
+
+            majorInfo = `Authmate Case\nDate EV: ${today}, Initials: Authmate Case, As per Insurance, ${orderData.payer.planName}, Active Coverage (${effectiveDate})\n${imagingType} (${cptCodes}) - No Auth Required - ${diagnosisCodes}`
+            radioButtonStatus = 'Authorized'
+          } else if (isAuthOnFile) {
+            // Format for Auth on File: Auth approved with auth number, dates, visits
+            const effectiveDate = new Date(orderData.payer.effectiveDate).toLocaleDateString('en-US')
+            const imagingType = orderData.order.imagingType || 'Procedure'
+            const cptCodes = orderData.order.cptCodes?.join(', ') || ''
+            const diagnosisCodes = orderData.order.diagnosisCodes?.join(', ') || ''
+
+            // Extract auth details from the entry if available
+            const detailsText = entry.detailsText || ''
+            let authNumber = 'A300419774' // Default placeholder
+            let authStartDate = '11/21/2025' // Default placeholder
+            let authEndDate = '11/21/2026' // Default placeholder
+            let visits = '1 Visit'
+
+            // Try to extract from detailsText if it contains AUTH#
+            if (detailsText.includes('AUTH#')) {
+              const authMatch = detailsText.match(/AUTH#(\w+)/)
+              if (authMatch) authNumber = authMatch[1]
+
+              // Try different date formats
+              const dateMatch1 = detailsText.match(/from (\d{2}\/\d{2}\/\d{4}) - (\d{2}\/\d{2}\/\d{4})/)
+              const dateMatch2 = detailsText.match(/from (\d{2}\/\d{2}\/\d{4}) to (\d{2}\/\d{2}\/\d{4})/)
+
+              if (dateMatch1) {
+                authStartDate = dateMatch1[1]
+                authEndDate = dateMatch1[2]
+              } else if (dateMatch2) {
+                authStartDate = dateMatch2[1]
+                authEndDate = dateMatch2[2]
+              }
+            }
+
+            majorInfo = `Authmate Case\nDate EV: ${today}, Initials: Authmate Case, As per Insurance, ${orderData.payer.planName} - Active Coverage (${effectiveDate})\nAuth approved for ${imagingType} (${cptCodes}) with ${authNumber} from ${authStartDate} to ${authEndDate} for ${visits} / Letter Attached - ${diagnosisCodes}`
+            radioButtonStatus = 'Authorized'
           } else {
-            // Default for NAR cases
-            majorInfo = `As per Insurance ${orderData.payer.name} - ${orderData.payer.status} (${new Date(orderData.payer.effectiveDate).toLocaleDateString('en-US')})\nAuth status: NAR - No Authorization Required per payer guidelines\nVerified with insurance: routine screening does not require PA\n\n${entry.date} Verified NAR status with insurance, case cleared for scheduling`
+            // For other cases, keep original format
+            const detailsText = entry.detailsText || ''
+            if (detailsText.includes('As per Insurance')) {
+              const lines = detailsText.split('\n')
+              const relevantLines = lines.filter(line =>
+                line.includes('As per Insurance') ||
+                line.includes('Auth status') ||
+                line.includes('Verified') ||
+                line.includes(entry.date.split('/')[1] + '/') // Find lines with dates
+              )
+              majorInfo = relevantLines.join('\n')
+            }
+            majorInfo = majorInfo.replace(/Prior Auth Questions:[\s\S]*?(?=\n\n|$)/g, '').trim()
+            radioButtonStatus = entry.authCases[0]?.radioButtonStatus || 'Required'
           }
-
-          // Remove "Prior Auth Questions" section if it exists
-          majorInfo = majorInfo.replace(/Prior Auth Questions:[\s\S]*?(?=\n\n|$)/g, '').trim()
 
           return {
             date: entry.date,
             detailsText: basicInfo,
             authCases: entry.authCases.length > 0 ? [{
               ...entry.authCases[0],
+              radioButtonStatus: radioButtonStatus,
               details: majorInfo,
               status: entry.authCases[0].status as 'Completed' | 'Pending' | 'In Progress'
             }] : [{
               id: '1',
-              radioButtonStatus: 'Required',
+              radioButtonStatus: radioButtonStatus,
               title: 'Authorization',
               details: majorInfo,
               status: 'Pending' as const
@@ -114,22 +168,46 @@ export default function BusinessOffice() {
       } else {
         // Default empty entries if no data exists
         const isNAR = orderData.paStatus.authStatus === 'NAR'
+        const isAuthOnFile = orderData.paStatus.authStatus === 'Auth on File'
         const dos = new Date(orderData.order.dateOfService).toLocaleDateString('en-US')
-        const today = new Date().toLocaleDateString('en-US')
+        const today = new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })
+        const effectiveDate = new Date(orderData.payer.effectiveDate).toLocaleDateString('en-US')
 
         const basicInfo = isNAR
           ? `Date: ${today}\nDOS: ${dos}\n\nRequired Auth`
           : `Date: ${today}\nDOS: ${dos}`
 
-        const majorDetails = `As per Insurance ${orderData.payer.name} - ${orderData.payer.status} (${new Date(orderData.payer.effectiveDate).toLocaleDateString('en-US')})\nAuth status: NAR - No Authorization Required per payer guidelines\nVerified with insurance: routine screening does not require PA\n\n${today} Verified NAR status with insurance, case cleared for scheduling`
+        // Format based on auth status
+        const imagingType = orderData.order.imagingType || 'Procedure'
+        const cptCodes = orderData.order.cptCodes?.join(', ') || ''
+        const diagnosisCodes = orderData.order.diagnosisCodes?.join(', ') || ''
+
+        let majorDetails = ''
+        let radioButtonStatus = 'Required'
+
+        if (isNAR) {
+          majorDetails = `Authmate Case\nDate EV: ${today}, Initials: Authmate Case, As per Insurance, ${orderData.payer.planName}, Active Coverage (${effectiveDate})\n${imagingType} (${cptCodes}) - No Auth Required - ${diagnosisCodes}`
+          radioButtonStatus = 'Authorized'
+        } else if (isAuthOnFile) {
+          // Default auth details for Auth on File
+          const authNumber = 'A300419774'
+          const authStartDate = '11/21/2025'
+          const authEndDate = '11/21/2026'
+          const visits = '1 Visit'
+
+          majorDetails = `Authmate Case\nDate EV: ${today}, Initials: Authmate Case, As per Insurance, ${orderData.payer.planName} - Active Coverage (${effectiveDate})\nAuth approved for ${imagingType} (${cptCodes}) with ${authNumber} from ${authStartDate} to ${authEndDate} for ${visits} / Letter Attached - ${diagnosisCodes}`
+          radioButtonStatus = 'Authorized'
+        } else {
+          majorDetails = `As per Insurance ${orderData.payer.name} - ${orderData.payer.status} (${effectiveDate})\nAuth status: ${orderData.paStatus.authStatus}\nVerified with insurance\n\n${today} Case under review`
+        }
 
         setEntries([
           {
-            date: new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }),
+            date: today,
             detailsText: basicInfo,
             authCases: [{
               id: '1',
-              radioButtonStatus: 'Required',
+              radioButtonStatus: radioButtonStatus,
               title: 'Authorization',
               details: majorDetails,
               status: 'Pending'
@@ -183,13 +261,15 @@ export default function BusinessOffice() {
   }
 
   const confirmTriggerRPA = () => {
-    // Prepare the OncoEMR note data
+    // Prepare the OncoEMR note data - only send text from right box (authCase details)
     const oncoEMRNote: OncoEMRNote = {
       patientMRN: orderData.patient.mrn,
       patientName: orderData.patient.name,
       dateOfService: new Date(orderData.order.dateOfService).toLocaleDateString('en-US'),
       insurance: orderData.payer.name,
-      authDetails: entries.map(entry => entry.detailsText).join('\n\n---\n\n'),
+      authDetails: entries.flatMap(entry =>
+        entry.authCases.map(ac => ac.details)
+      ).join('\n\n---\n\n'),
       boValue: entries.flatMap(entry =>
         entry.authCases.map(ac => `${ac.radioButtonStatus}: ${ac.title} - ${ac.status}`)
       ).join('; '),
@@ -214,6 +294,7 @@ export default function BusinessOffice() {
 
     setIsTriggerModalOpen(false)
     setTriggerSuccess(true)
+    setRpaTriggered(true)
 
     // Auto-hide success message after 3 seconds
     setTimeout(() => {
@@ -274,6 +355,7 @@ DOS:"
                             onChange={(e) => updateAuthCase(entryIndex, 'radioButtonStatus', e.target.value)}
                             className="text-sm border border-gray-300 rounded px-2 py-1"
                           >
+                            <option>Authorized</option>
                             <option>Required</option>
                             <option>Approved</option>
                             <option>Denied</option>
@@ -281,12 +363,19 @@ DOS:"
                             <option>Auth Issue</option>
                           </select>
                         </div>
-                        <button className="p-1 hover:bg-gray-100 rounded">
-                          <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                          </svg>
-                        </button>
+                        {/* Only show eye icon for patient 001 after RPA is triggered */}
+                        {rpaTriggered && orderData.patient.mrn === '800721' && (
+                          <button
+                            onClick={() => setIsScreenshotModalOpen(true)}
+                            className="p-1 hover:bg-gray-100 rounded"
+                            title="View OncoEMR Screenshot"
+                          >
+                            <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                          </button>
+                        )}
                       </div>
 
                       {/* Case Details - What happened and when */}
@@ -387,6 +476,40 @@ DOS:"
         </div>
       )}
 
+      {/* Screenshot Modal for Patient 001 */}
+      {isScreenshotModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-5xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6 border-b">
+              <h3 className="text-xl font-semibold text-gray-900">OncoEMR Activity Screenshot</h3>
+              <button
+                onClick={() => setIsScreenshotModalOpen(false)}
+                className="p-1 hover:bg-gray-100 rounded"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="p-6">
+              <img
+                src="/documents/NAR_SS.png"
+                alt="OncoEMR Activity Screenshot"
+                className="w-full h-auto rounded-lg border border-gray-200"
+              />
+            </div>
+            <div className="p-6 border-t bg-gray-50 flex justify-end">
+              <button
+                onClick={() => setIsScreenshotModalOpen(false)}
+                className="px-6 py-2 text-sm bg-black text-white rounded hover:bg-gray-800"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Trigger Modal */}
       {isTriggerModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -426,21 +549,16 @@ DOS:"
               </div>
 
               <div className="border-t pt-4">
-                <p className="text-sm font-semibold text-gray-700 mb-2">Preview of Comments:</p>
+                <p className="text-sm font-semibold text-gray-700 mb-2">Preview of Message to OncoEMR:</p>
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                   {entries.map((entry, idx) => {
                     const authCase = getSingleAuthCase(entry)
                     return (
                       <div key={idx} className="mb-4 last:mb-0">
-                        <div className="mb-3 pb-3 border-b border-gray-300">
-                          <p className="text-xs font-semibold text-gray-600 mb-1">Basic Information:</p>
-                          <pre className="text-xs text-gray-900 whitespace-pre-wrap">{entry.detailsText}</pre>
-                        </div>
                         {authCase && (
                           <div>
                             <p className="text-xs font-semibold text-gray-600 mb-1">Radio Button: {authCase.radioButtonStatus}</p>
-                            <p className="text-xs font-semibold text-gray-600 mb-2">Details:</p>
-                            <div className="bg-white border border-gray-200 rounded p-3 max-h-48 overflow-y-auto">
+                            <div className="bg-white border border-gray-200 rounded p-3 max-h-64 overflow-y-auto mt-2">
                               <pre className="text-xs text-gray-900 whitespace-pre-wrap leading-relaxed">
                                 {authCase.details}
                               </pre>

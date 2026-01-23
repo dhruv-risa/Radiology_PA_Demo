@@ -68,7 +68,7 @@ export default function DocumentModal({ isOpen, onClose, title, documentUrl }: D
               </div>
             ) : (
               <iframe
-                src={documentUrl}
+                src={`${documentUrl}${documentUrl.includes('?') ? '&' : '#'}view=FitH&pagemode=none&navpanes=0&toolbar=1`}
                 className="w-full h-full border-0"
                 title={title}
               />

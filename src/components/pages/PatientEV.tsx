@@ -182,10 +182,6 @@ export default function PatientEV() {
                     <div className="text-xs text-gray-500 mb-1">Service Type Code</div>
                     <div className="text-[11px] font-medium text-gray-900">62</div>
                   </div>
-                  <div>
-                    <div className="text-xs text-gray-500 mb-1">Imaging Modality</div>
-                    <div className="text-[11px] font-medium text-gray-900">{order.imagingModality}</div>
-                  </div>
                 </div>
               </div>
 

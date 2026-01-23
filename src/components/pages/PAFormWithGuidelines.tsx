@@ -1,22 +1,8 @@
-import { useState, useRef, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { RadiologyPAOrder, Document } from '../../utils/patientDataHelpers'
+import { useState, useRef } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { RadiologyPAOrder, Document, getOrderByMRN } from '../../utils/patientDataHelpers'
 import { getIcdDescription } from '../../utils/icdCodes'
-
-export interface PAFormData {
-  diagnoses: Array<{ icdCode: string; icdDescription: string }>
-  procedures: Array<{ codeDescription: string; code: string; serviceQuantity: string; serviceQuantityType: string }>
-  providerNotes: string
-  fromDate: string
-  attachments: Document[]
-}
-
-interface PAFormProps {
-  isOpen: boolean
-  onClose: () => void
-  onContinue: (formData: PAFormData) => void
-  orderData: RadiologyPAOrder
-}
+import { PAFormData } from '../common/PAForm'
 
 interface DiagnosisEntry {
   icdCode: string
@@ -30,15 +16,14 @@ interface ProcedureEntry {
   serviceQuantityType: string
 }
 
-type Section = 'patient' | 'provider' | 'diagnosis' | 'procedures' | 'attachments'
-
-export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFormProps) {
+export default function PAFormWithGuidelines() {
   const navigate = useNavigate()
-  const [currentSection, setCurrentSection] = useState<Section>('patient')
-  const mainContentRef = useRef<HTMLDivElement>(null)
+  const { id } = useParams()
+  const orderData = getOrderByMRN(id!)
 
   // Pre-fill diagnoses with data from orderData or dummy data
   const [diagnoses, setDiagnoses] = useState<DiagnosisEntry[]>(() => {
+    if (!orderData) return [{ icdCode: 'G43.909', icdDescription: getIcdDescription('G43.909') }]
     if (orderData.order.diagnosisCodes && orderData.order.diagnosisCodes.length > 0) {
       return orderData.order.diagnosisCodes.map(code => {
         // Handle both string format and object format
@@ -61,6 +46,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
 
   // Pre-fill procedures with data from orderData
   const [procedures, setProcedures] = useState<ProcedureEntry[]>(() => {
+    if (!orderData) return [{ codeDescription: '', code: '', serviceQuantity: '365', serviceQuantityType: 'Days' }]
     if (orderData.order.cptCodes && orderData.order.cptCodes.length > 0) {
       return orderData.order.cptCodes.map(code => ({
         codeDescription: orderData.order.imagingType,
@@ -73,66 +59,18 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
   })
 
   const [providerNotes, setProviderNotes] = useState('Patient presents with chronic symptoms requiring advanced imaging for proper diagnosis and treatment planning. Clinical documentation supports medical necessity.')
-  const [fromDate, setFromDate] = useState(orderData.order.dateOfService || new Date().toISOString().split('T')[0])
-  const [attachments, setAttachments] = useState<Document[]>(orderData.documents || [])
+  const [fromDate, setFromDate] = useState(orderData?.order.dateOfService || new Date().toISOString().split('T')[0])
+  const [attachments, setAttachments] = useState<Document[]>(orderData?.documents || [])
 
-  const sectionRefs = useRef<Record<Section, HTMLDivElement | null>>({
-    patient: null,
-    provider: null,
-    diagnosis: null,
-    procedures: null,
-    attachments: null
-  })
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const mainContentRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = 'unset'
-    }
-    return () => {
-      document.body.style.overflow = 'unset'
-    }
-  }, [isOpen])
-
-  // Add scroll detection to update active section
-  useEffect(() => {
-    if (!isOpen || !mainContentRef.current) return
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
-            const section = entry.target.getAttribute('data-section') as Section
-            if (section) {
-              setCurrentSection(section)
-            }
-          }
-        })
-      },
-      {
-        root: mainContentRef.current,
-        threshold: [0, 0.3, 0.5, 0.7, 1],
-        rootMargin: '-100px 0px -50% 0px'
-      }
+  if (!orderData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-600">No order data found</p>
+      </div>
     )
-
-    // Observe all sections
-    Object.entries(sectionRefs.current).forEach(([_, ref]) => {
-      if (ref) observer.observe(ref)
-    })
-
-    return () => {
-      observer.disconnect()
-    }
-  }, [isOpen])
-
-  if (!isOpen) return null
-
-  const scrollToSection = (section: Section) => {
-    setCurrentSection(section)
-    sectionRefs.current[section]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
   const addDiagnosis = () => {
@@ -182,7 +120,6 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
     }))
 
     setAttachments([...attachments, ...newAttachments])
-    // Reset the input
     event.target.value = ''
   }
 
@@ -197,111 +134,67 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
   }
 
   const handleContinue = () => {
-    const formData: PAFormData = {
+    const formDataToSave: PAFormData = {
       diagnoses,
       procedures,
       providerNotes,
       fromDate,
       attachments
     }
-    onContinue(formData)
+
+    // Navigate back to workflow with state to show preview
+    navigate(`/patient/${id}/dynamics/workflow`, {
+      state: { continueFromGuidelines: true, formData: formDataToSave }
+    })
   }
 
-  const getSectionStatus = (section: Section): 'active' | 'default' => {
-    return currentSection === section ? 'active' : 'default'
+  const handleHideGuidelines = () => {
+    // Navigate back to workflow with state to reopen the PA form
+    navigate(`/patient/${id}/dynamics/workflow`, {
+      state: { reopenPAForm: true, formData: { diagnoses, procedures, providerNotes, fromDate, attachments } }
+    })
   }
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden bg-black bg-opacity-50">
-      <div className="absolute inset-0 flex items-center justify-center p-4">
-        <div className="relative bg-white rounded-lg shadow-xl w-full max-w-7xl h-[95vh] flex overflow-hidden">
-          {/* Header */}
-          <div className="absolute top-0 left-0 right-0 bg-white border-b px-6 py-4 flex items-center justify-between z-10">
-            <div>
-              <h1 className="text-xl font-semibold text-gray-900">
-                {orderData.patient.name.toUpperCase()} ({orderData.patient.mrn})
-              </h1>
-            </div>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => navigate(`/patient/${orderData.patient.mrn}/pa-form-guidelines`)}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                View Guidelines
-              </button>
-              <button
-                onClick={onClose}
-                className="p-2 hover:bg-gray-100 rounded transition-colors"
-                aria-label="Close"
-              >
-                <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-          </div>
+    <div className="fixed inset-0 bg-gray-50 flex flex-col">
+      {/* Header */}
+      <div className="bg-white border-b px-6 py-4 flex items-center justify-between z-10">
+        <div>
+          <h1 className="text-xl font-semibold text-gray-900">
+            {orderData.patient.name.toUpperCase()} ({orderData.patient.mrn})
+          </h1>
+        </div>
+        <button
+          onClick={handleHideGuidelines}
+          className="p-2 hover:bg-gray-100 rounded transition-colors"
+          aria-label="Close"
+        >
+          <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
 
-          {/* Sidebar Navigation */}
-          <div className="w-64 bg-gray-50 border-r flex-shrink-0 pt-24 overflow-y-auto">
-            <nav className="px-4 py-4 space-y-1">
-              <button
-                onClick={() => scrollToSection('patient')}
-                className={`w-full text-left px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
-                  getSectionStatus('patient') === 'active'
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
-              >
-                Patient Details
-              </button>
-              <button
-                onClick={() => scrollToSection('provider')}
-                className={`w-full text-left px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
-                  getSectionStatus('provider') === 'active'
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
-              >
-                Provider Details
-              </button>
-              <button
-                onClick={() => scrollToSection('diagnosis')}
-                className={`w-full text-left px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
-                  getSectionStatus('diagnosis') === 'active'
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
-              >
-                Diagnosis Information
-              </button>
-              <button
-                onClick={() => scrollToSection('procedures')}
-                className={`w-full text-left px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
-                  getSectionStatus('procedures') === 'active'
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
-              >
-                Procedures Information
-              </button>
-              <button
-                onClick={() => scrollToSection('attachments')}
-                className={`w-full text-left px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
-                  getSectionStatus('attachments') === 'active'
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
-              >
-                Attachments
-              </button>
-            </nav>
+      {/* Main Content - Split View */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Left Side - Guidelines */}
+        <div className="w-1/2 bg-white border-r flex flex-col">
+          <div className="bg-gray-50 border-b px-6 py-3">
+            <h2 className="text-lg font-semibold text-gray-900">Clinical Guidelines</h2>
           </div>
+          <div className="flex-1 overflow-hidden">
+            <iframe
+              src="/documents/Guideline.pdf#view=FitH&pagemode=none&navpanes=0&toolbar=1"
+              className="w-full h-full border-0"
+              title="Clinical Guidelines"
+            />
+          </div>
+        </div>
 
-          {/* Main Content */}
-          <div ref={mainContentRef} className="flex-1 overflow-y-auto pt-24 pb-24">
+        {/* Right Side - PA Form */}
+        <div className="w-1/2 flex overflow-hidden">
+          {/* Form Content */}
+          <div ref={mainContentRef} className="flex-1 overflow-y-auto pb-24">
             <div className="px-8 py-6">
               {/* Aetna Header */}
               <div className="bg-gray-50 border border-gray-200 rounded-lg px-6 py-4 mb-6">
@@ -309,7 +202,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
               </div>
 
               {/* Patient Details Section */}
-              <div ref={(el) => (sectionRefs.current.patient = el)} data-section="patient" className="mb-8">
+              <div className="mb-8">
                 <h3 className="text-base font-bold text-gray-900 mb-4 pb-2 border-b-2 border-gray-200">
                   Patient Details
                 </h3>
@@ -385,7 +278,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
               </div>
 
               {/* Provider Details Section */}
-              <div ref={(el) => (sectionRefs.current.provider = el)} data-section="provider" className="mb-8">
+              <div className="mb-8">
                 <h3 className="text-base font-bold text-gray-900 mb-4 pb-2 border-b-2 border-gray-200">
                   Provider Details
                 </h3>
@@ -447,7 +340,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
               </div>
 
               {/* Diagnosis Information Section */}
-              <div ref={(el) => (sectionRefs.current.diagnosis = el)} data-section="diagnosis" className="mb-8">
+              <div className="mb-8">
                 <h3 className="text-base font-bold text-gray-900 mb-4 pb-2 border-b-2 border-gray-200">
                   Diagnosis Information
                 </h3>
@@ -516,7 +409,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
               </div>
 
               {/* Procedures Information Section */}
-              <div ref={(el) => (sectionRefs.current.procedures = el)} data-section="procedures" className="mb-8">
+              <div className="mb-8">
                 <h3 className="text-base font-bold text-gray-900 mb-4 pb-2 border-b-2 border-gray-200">
                   Procedures Information
                 </h3>
@@ -629,7 +522,7 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
               </div>
 
               {/* Attachments Section */}
-              <div ref={(el) => (sectionRefs.current.attachments = el)} data-section="attachments" className="mb-8">
+              <div className="mb-8">
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -704,23 +597,26 @@ export default function PAForm({ isOpen, onClose, onContinue, orderData }: PAFor
               </div>
             </div>
           </div>
-
-          {/* Footer Buttons */}
-          <div className="absolute bottom-0 left-0 right-0 bg-white border-t px-8 py-4 flex justify-end gap-3">
-            <button
-              onClick={onClose}
-              className="px-6 py-2.5 text-sm font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-            >
-              Go Back
-            </button>
-            <button
-              onClick={handleContinue}
-              className="px-6 py-2.5 text-sm font-medium bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
-            >
-              Continue
-            </button>
-          </div>
         </div>
+      </div>
+
+      {/* Footer Buttons */}
+      <div className="bg-white border-t px-8 py-4 flex justify-end gap-3">
+        <button
+          onClick={handleHideGuidelines}
+          className="px-6 py-2.5 text-sm font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+          </svg>
+          Hide Guidelines
+        </button>
+        <button
+          onClick={handleContinue}
+          className="px-6 py-2.5 text-sm font-medium bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+        >
+          Continue
+        </button>
       </div>
     </div>
   )

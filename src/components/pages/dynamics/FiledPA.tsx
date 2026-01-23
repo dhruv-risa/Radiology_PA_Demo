@@ -40,6 +40,20 @@ export default function FiledPA() {
     setIsDocumentModalOpen(true)
   }
 
+  const getFiledPAScreenshot = () => {
+    // For RAD-008 and RAD-009, show the actual Filed_PA.pdf
+    if (orderData && (orderData.orderId === 'RAD-008' || orderData.orderId === 'RAD-009')) {
+      return '/documents/Filed_PA.pdf'
+    }
+    // Using placeholder image for other patients
+    return '/documents/NAR_SS.png'
+  }
+
+  const openFiledPADocument = () => {
+    setCurrentDocument({ title: 'PA Filed by Agent', url: getFiledPAScreenshot() })
+    setIsDocumentModalOpen(true)
+  }
+
   useEffect(() => {
     if (!orderData) return
 
@@ -62,10 +76,21 @@ export default function FiledPA() {
           submittedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
           authorizationNumber: authNumber,
           formData: {
-            diagnoses: orderData.order.diagnosisCodes?.map(code => ({
-              icdCode: code,
-              icdDescription: getIcdDescription(code)
-            })) || [{ icdCode: 'R07.9', icdDescription: getIcdDescription('R07.9') }],
+            diagnoses: orderData.order.diagnosisCodes?.map(code => {
+              // Handle both string format and object format
+              if (typeof code === 'string') {
+                return {
+                  icdCode: code,
+                  icdDescription: getIcdDescription(code)
+                }
+              } else {
+                // Handle object format with code and description
+                return {
+                  icdCode: (code as any).code,
+                  icdDescription: (code as any).description || getIcdDescription((code as any).code)
+                }
+              }
+            }) || [{ icdCode: 'R07.9', icdDescription: getIcdDescription('R07.9') }],
             procedures: orderData.order.cptCodes?.map(code => ({
               codeDescription: orderData.order.imagingType,
               code: code,
@@ -132,6 +157,17 @@ export default function FiledPA() {
                   </div>
                 </div>
               </div>
+            </div>
+            <div>
+              <button
+                onClick={openFiledPADocument}
+                className="px-4 py-2 text-sm bg-gray-900 text-white rounded hover:bg-gray-800 flex items-center gap-2"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                View PA Filed by Agent
+              </button>
             </div>
           </div>
         </div>
