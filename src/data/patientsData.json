@@ -11,8 +11,13 @@
       "order": {
         "imagingType": "Bone DXA",
         "imagingModality": "DXA",
-        "cptCodes": ["77080"],
-        "diagnosisCodes": ["M81.0", "Z79.83"],
+        "cptCodes": [
+          "77080"
+        ],
+        "diagnosisCodes": [
+          "M81.0",
+          "Z79.83"
+        ],
         "dateOfService": "2026-02-19",
         "orderingProvider": {
           "name": "Dr. Amanda Lewis",
@@ -34,8 +39,14 @@
         "priorAuthRequired": false,
         "referralRequired": false,
         "financials": {
-          "deductible": { "total": 500, "used": 120 },
-          "outOfPocket": { "total": 1500, "used": 450 },
+          "deductible": {
+            "total": 500,
+            "used": 120
+          },
+          "outOfPocket": {
+            "total": 1500,
+            "used": 450
+          },
           "copay": 0,
           "coinsurance": "10%"
         }
@@ -48,7 +59,7 @@
         "entries": [
           {
             "date": "01/16/2026",
-            "detailsText": "Details: Date: 01/15/2026, Initials: JM-AL, As per Insurance Aetna Choice PPO- Active (01/01/2026),\nBone DXA (77080) - M81.0, Z79.83\nAuth status: NAR - No Authorization Required per payer guidelines\nVerified with insurance: routine bone density screening does not require PA\nPrior Auth Questions:\n• Is this routine screening or diagnostic?\n• Patient age and risk factors documented?\n\n1/16 Verified NAR status with insurance, case cleared for scheduling",
+            "detailsText": "Details: Date: 01/15/2026, Initials: JM-AL, As per Insurance Aetna Choice PPO- Active (01/01/2026),\nBone DXA (77080) - M81.0, Z79.83\nAuth status: NAR - No Authorization Required per payer guidelines\nVerified with insurance: routine bone density screening does not require PA\nPrior Auth Questions:\n\u2022 Is this routine screening or diagnostic?\n\u2022 Patient age and risk factors documented?\n\n1/16 Verified NAR status with insurance, case cleared for scheduling",
             "authCases": [
               {
                 "id": "1",
@@ -75,7 +86,8 @@
           "type": "Clinical Notes",
           "fetchedDate": "2026-01-15T10:30:00Z",
           "source": "EHR System",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/clinical-notes.pdf"
         },
         {
           "id": "DOC-001-2",
@@ -83,7 +95,8 @@
           "type": "Lab Report",
           "fetchedDate": "2026-01-15T10:32:00Z",
           "source": "Lab Portal",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/lab-reports.pdf"
         },
         {
           "id": "DOC-001-3",
@@ -91,7 +104,8 @@
           "type": "Imaging Report",
           "fetchedDate": "2026-01-15T10:35:00Z",
           "source": "PACS System",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/imaging-reports.pdf"
         }
       ]
     },
@@ -106,7 +120,9 @@
       "order": {
         "imagingType": "X-Ray Skull",
         "imagingModality": "X-Ray",
-        "cptCodes": ["70010"],
+        "cptCodes": [
+          "70010"
+        ],
         "dateOfService": "2026-02-19",
         "orderingProvider": {
           "name": "Dr. Kevin Morris",
@@ -128,8 +144,14 @@
         "priorAuthRequired": false,
         "referralRequired": false,
         "financials": {
-          "deductible": { "total": 750, "used": 200 },
-          "outOfPocket": { "total": 2000, "used": 600 },
+          "deductible": {
+            "total": 750,
+            "used": 200
+          },
+          "outOfPocket": {
+            "total": 2000,
+            "used": 600
+          },
           "copay": 25,
           "coinsurance": "0%"
         }
@@ -142,7 +164,7 @@
         "entries": [
           {
             "date": "01/17/2026",
-            "detailsText": "Details: Date: 01/16/2026, Initials: ST-KM, As per Insurance BCBS PPO Blue- Active (01/01/2026),\nX-Ray Skull (70010) for head injury evaluation\nAuth status: NAR - No Authorization Required per BCBS guidelines\nSimple X-ray procedures do not require PA\nPrior Auth Questions:\n• Is this emergency vs. routine?\n• Any prior imaging available?\n\n1/17 Verified NAR with BCBS, copay $25 applies",
+            "detailsText": "Details: Date: 01/16/2026, Initials: ST-KM, As per Insurance BCBS PPO Blue- Active (01/01/2026),\nX-Ray Skull (70010) for head injury evaluation\nAuth status: NAR - No Authorization Required per BCBS guidelines\nSimple X-ray procedures do not require PA\nPrior Auth Questions:\n\u2022 Is this emergency vs. routine?\n\u2022 Any prior imaging available?\n\n1/17 Verified NAR with BCBS, copay $25 applies",
             "authCases": [
               {
                 "id": "1",
@@ -169,7 +191,8 @@
           "type": "Clinical Notes",
           "fetchedDate": "2026-01-16T09:15:00Z",
           "source": "EHR System",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/clinical-notes.pdf"
         },
         {
           "id": "DOC-002-2",
@@ -177,7 +200,8 @@
           "type": "Imaging Report",
           "fetchedDate": "2026-01-16T09:18:00Z",
           "source": "PACS System",
-          "status": "Not Available"
+          "status": "Not Available",
+          "url": "/documents/imaging-reports.pdf"
         }
       ]
     },
@@ -192,7 +216,9 @@
       "order": {
         "imagingType": "X-Ray Knee",
         "imagingModality": "X-Ray",
-        "cptCodes": ["73560"],
+        "cptCodes": [
+          "73560"
+        ],
         "dateOfService": "2026-02-10",
         "orderingProvider": {
           "name": "Dr. Jennifer Cole",
@@ -214,8 +240,14 @@
         "priorAuthRequired": false,
         "referralRequired": false,
         "financials": {
-          "deductible": { "total": 600, "used": 600 },
-          "outOfPocket": { "total": 1800, "used": 1100 },
+          "deductible": {
+            "total": 600,
+            "used": 600
+          },
+          "outOfPocket": {
+            "total": 1800,
+            "used": 1100
+          },
           "copay": 0,
           "coinsurance": "20%"
         }
@@ -228,7 +260,7 @@
         "entries": [
           {
             "date": "01/12/2026",
-            "detailsText": "Details: Date: 01/10/2026, Initials: DC-JC, As per Insurance Cigna Open Access Plus- Active (01/01/2026),\nX-Ray Knee (73560) for knee pain evaluation\nAuth status: NAR - No Authorization Required\nStandard X-ray imaging covered without PA per Cigna policy\nPrior Auth Questions:\n• Recent injury or chronic condition?\n• Physical therapy attempted?\n\n1/12 Insurance verified, patient has met deductible, 20% coinsurance applies",
+            "detailsText": "Details: Date: 01/10/2026, Initials: DC-JC, As per Insurance Cigna Open Access Plus- Active (01/01/2026),\nX-Ray Knee (73560) for knee pain evaluation\nAuth status: NAR - No Authorization Required\nStandard X-ray imaging covered without PA per Cigna policy\nPrior Auth Questions:\n\u2022 Recent injury or chronic condition?\n\u2022 Physical therapy attempted?\n\n1/12 Insurance verified, patient has met deductible, 20% coinsurance applies",
             "authCases": [
               {
                 "id": "1",
@@ -255,7 +287,8 @@
           "type": "Clinical Notes",
           "fetchedDate": "2026-01-10T14:20:00Z",
           "source": "EHR System",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/clinical-notes.pdf"
         },
         {
           "id": "DOC-003-2",
@@ -263,7 +296,8 @@
           "type": "Therapy Notes",
           "fetchedDate": "2026-01-10T14:25:00Z",
           "source": "PT Portal",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/therapy-notes.pdf"
         }
       ]
     },
@@ -278,7 +312,9 @@
       "order": {
         "imagingType": "PET Whole Body PET/CT",
         "imagingModality": "PET/CT",
-        "cptCodes": ["78813"],
+        "cptCodes": [
+          "78813"
+        ],
         "dateOfService": "2026-02-22",
         "orderingProvider": {
           "name": "Dr. Farzana Ali",
@@ -300,8 +336,14 @@
         "priorAuthRequired": false,
         "referralRequired": false,
         "financials": {
-          "deductible": { "total": 0, "used": 0 },
-          "outOfPocket": { "total": 1500, "used": 538 },
+          "deductible": {
+            "total": 0,
+            "used": 0
+          },
+          "outOfPocket": {
+            "total": 1500,
+            "used": 538
+          },
           "copay": 0,
           "coinsurance": "0%"
         }
@@ -314,7 +356,7 @@
         "entries": [
           {
             "date": "02/04/2026",
-            "detailsText": "Details: Date: 12/16/2025, Initials: OO-SH, As per Insurance Aetna Medicare Advantage- Active (01/01/2026),\nAuth for PET/CT Whole Body (78813) with AUTH#A289091335 as per medical necessity from 08/14/2025 - 08/14/2026 under Dr. Farzana Ali, NPI: 1736592048\nPrior Auth Questions:\n• Does the patient meet clinical criteria for PET scan?\n\n1/22 Verified auth on file, ready to proceed",
+            "detailsText": "Details: Date: 12/16/2025, Initials: OO-SH, As per Insurance Aetna Medicare Advantage- Active (01/01/2026),\nAuth for PET/CT Whole Body (78813) with AUTH#A289091335 as per medical necessity from 08/14/2025 - 08/14/2026 under Dr. Farzana Ali, NPI: 1736592048\nPrior Auth Questions:\n\u2022 Does the patient meet clinical criteria for PET scan?\n\n1/22 Verified auth on file, ready to proceed",
             "authCases": [
               {
                 "id": "1",
@@ -341,7 +383,8 @@
           "type": "Imaging Report",
           "fetchedDate": "2026-01-18T11:00:00Z",
           "source": "PACS System",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/imaging-reports.pdf"
         },
         {
           "id": "DOC-004-2",
@@ -349,7 +392,8 @@
           "type": "Imaging Report",
           "fetchedDate": "2026-01-18T11:05:00Z",
           "source": "PACS System",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/imaging-reports.pdf"
         },
         {
           "id": "DOC-004-3",
@@ -357,7 +401,8 @@
           "type": "Imaging Report",
           "fetchedDate": "2026-01-18T11:10:00Z",
           "source": "PACS System",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/imaging-reports.pdf"
         },
         {
           "id": "DOC-004-4",
@@ -365,7 +410,8 @@
           "type": "Imaging Report",
           "fetchedDate": "2026-01-18T11:15:00Z",
           "source": "PACS System",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/imaging-reports.pdf"
         },
         {
           "id": "DOC-004-5",
@@ -373,7 +419,8 @@
           "type": "Lab Report",
           "fetchedDate": "2026-01-18T11:20:00Z",
           "source": "Lab Portal",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/lab-reports.pdf"
         },
         {
           "id": "DOC-004-6",
@@ -381,7 +428,8 @@
           "type": "Lab Report",
           "fetchedDate": "2026-01-18T11:25:00Z",
           "source": "Lab Portal",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/lab-reports.pdf"
         }
       ]
     },
@@ -396,7 +444,9 @@
       "order": {
         "imagingType": "MRI Abdomen W & W/O Contrast",
         "imagingModality": "MRI",
-        "cptCodes": ["74183"],
+        "cptCodes": [
+          "74183"
+        ],
         "dateOfService": "2026-02-19",
         "orderingProvider": {
           "name": "Dr. Vernon Shaw",
@@ -418,8 +468,14 @@
         "priorAuthRequired": true,
         "referralRequired": false,
         "financials": {
-          "deductible": { "total": 1000, "used": 450 },
-          "outOfPocket": { "total": 2500, "used": 1200 },
+          "deductible": {
+            "total": 1000,
+            "used": 450
+          },
+          "outOfPocket": {
+            "total": 2500,
+            "used": 1200
+          },
           "copay": 0,
           "coinsurance": "20%"
         }
@@ -433,7 +489,7 @@
         "entries": [
           {
             "date": "01/20/2026",
-            "detailsText": "Details: Date: 01/14/2026, Initials: MB-K, As per Insurance BCBS PPO Blue- Active (01/01/2026),\nMRI Abdomen W & W/O Contrast (74183) auth required\nAuth status: Clinical Missing - need additional documentation\nPrior Auth Questions:\n• Does patient have prior imaging showing progression?\n• Are clinical notes from referring physician available?\n\n1/20 Contacted provider office for missing clinical notes",
+            "detailsText": "Details: Date: 01/14/2026, Initials: MB-K, As per Insurance BCBS PPO Blue- Active (01/01/2026),\nMRI Abdomen W & W/O Contrast (74183) auth required\nAuth status: Clinical Missing - need additional documentation\nPrior Auth Questions:\n\u2022 Does patient have prior imaging showing progression?\n\u2022 Are clinical notes from referring physician available?\n\n1/20 Contacted provider office for missing clinical notes",
             "authCases": [
               {
                 "id": "1",
@@ -460,7 +516,8 @@
           "type": "Imaging Report",
           "fetchedDate": "2026-01-14T13:45:00Z",
           "source": "PACS System",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/imaging-reports.pdf"
         },
         {
           "id": "DOC-005-2",
@@ -468,7 +525,8 @@
           "type": "Imaging Report",
           "fetchedDate": "2026-01-14T13:50:00Z",
           "source": "PACS System",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/imaging-reports.pdf"
         },
         {
           "id": "DOC-005-3",
@@ -476,7 +534,8 @@
           "type": "Imaging Report",
           "fetchedDate": "2026-01-14T13:55:00Z",
           "source": "PACS System",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/imaging-reports.pdf"
         },
         {
           "id": "DOC-005-4",
@@ -484,7 +543,8 @@
           "type": "Imaging Report",
           "fetchedDate": "2026-01-14T14:00:00Z",
           "source": "PACS System",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/imaging-reports.pdf"
         },
         {
           "id": "DOC-005-5",
@@ -492,7 +552,8 @@
           "type": "Clinical Notes",
           "fetchedDate": "2026-01-14T14:05:00Z",
           "source": "EHR System",
-          "status": "Not Available"
+          "status": "Not Available",
+          "url": "/documents/clinical-notes.pdf"
         },
         {
           "id": "DOC-005-6",
@@ -500,7 +561,8 @@
           "type": "Referral",
           "fetchedDate": "2026-01-14T14:10:00Z",
           "source": "EHR System",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/referral-documents.pdf"
         }
       ]
     },
@@ -515,7 +577,9 @@
       "order": {
         "imagingType": "MRI Abdomen W & W/O Contrast",
         "imagingModality": "MRI",
-        "cptCodes": ["74183"],
+        "cptCodes": [
+          "74183"
+        ],
         "dateOfService": "2026-02-10",
         "orderingProvider": {
           "name": "Dr. Felix David",
@@ -537,8 +601,14 @@
         "priorAuthRequired": true,
         "referralRequired": false,
         "financials": {
-          "deductible": { "total": 800, "used": 300 },
-          "outOfPocket": { "total": 2200, "used": 900 },
+          "deductible": {
+            "total": 800,
+            "used": 300
+          },
+          "outOfPocket": {
+            "total": 2200,
+            "used": 900
+          },
           "copay": 0,
           "coinsurance": "20%"
         }
@@ -552,7 +622,7 @@
         "entries": [
           {
             "date": "01/13/2026",
-            "detailsText": "Details: Date: 01/12/2026, Initials: PP-FD, As per Insurance Cigna Open Access Plus- Active (01/01/2026),\nMRI Abdomen W & W/O Contrast (74183)\nAuth status: Supporting Imaging Missing\nPrior ultrasound and CT scan reports required but not available in system\nPrior Auth Questions:\n• Are prior imaging studies available?\n• Has patient completed prior studies?\n\n1/13 Contacted PACS - unable to locate ultrasound and CT reports, requesting from external facility",
+            "detailsText": "Details: Date: 01/12/2026, Initials: PP-FD, As per Insurance Cigna Open Access Plus- Active (01/01/2026),\nMRI Abdomen W & W/O Contrast (74183)\nAuth status: Supporting Imaging Missing\nPrior ultrasound and CT scan reports required but not available in system\nPrior Auth Questions:\n\u2022 Are prior imaging studies available?\n\u2022 Has patient completed prior studies?\n\n1/13 Contacted PACS - unable to locate ultrasound and CT reports, requesting from external facility",
             "authCases": [
               {
                 "id": "1",
@@ -579,7 +649,8 @@
           "type": "Imaging Report",
           "fetchedDate": "2026-01-12T10:20:00Z",
           "source": "PACS System",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/imaging-reports.pdf"
         },
         {
           "id": "DOC-006-2",
@@ -587,7 +658,8 @@
           "type": "Imaging Report",
           "fetchedDate": "2026-01-12T10:25:00Z",
           "source": "PACS System",
-          "status": "Not Available"
+          "status": "Not Available",
+          "url": "/documents/imaging-reports.pdf"
         },
         {
           "id": "DOC-006-3",
@@ -595,7 +667,8 @@
           "type": "Imaging Report",
           "fetchedDate": "2026-01-12T10:30:00Z",
           "source": "PACS System",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/imaging-reports.pdf"
         },
         {
           "id": "DOC-006-4",
@@ -603,7 +676,8 @@
           "type": "Imaging Report",
           "fetchedDate": "2026-01-12T10:35:00Z",
           "source": "PACS System",
-          "status": "Not Available"
+          "status": "Not Available",
+          "url": "/documents/imaging-reports.pdf"
         },
         {
           "id": "DOC-006-5",
@@ -611,7 +685,8 @@
           "type": "Clinical Notes",
           "fetchedDate": "2026-01-12T10:40:00Z",
           "source": "EHR System",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/clinical-notes.pdf"
         }
       ]
     },
@@ -626,7 +701,9 @@
       "order": {
         "imagingType": "PET/CT Skull Base to Mid Thigh",
         "imagingModality": "PET/CT",
-        "cptCodes": ["78815"],
+        "cptCodes": [
+          "78815"
+        ],
         "dateOfService": "2026-02-22",
         "orderingProvider": {
           "name": "Dr. Adriana Ruiz",
@@ -648,8 +725,14 @@
         "priorAuthRequired": true,
         "referralRequired": false,
         "financials": {
-          "deductible": { "total": 1200, "used": 800 },
-          "outOfPocket": { "total": 3000, "used": 1900 },
+          "deductible": {
+            "total": 1200,
+            "used": 800
+          },
+          "outOfPocket": {
+            "total": 3000,
+            "used": 1900
+          },
           "copay": 0,
           "coinsurance": "20%"
         }
@@ -663,7 +746,7 @@
         "entries": [
           {
             "date": "01/19/2026",
-            "detailsText": "Details: Date: 01/17/2026, Initials: RW-P, As per Insurance Aetna Choice PPO- Active (01/01/2026),\nPET/CT Skull Base to Mid Thigh (78815) auth required\nAuth status: Invalid Dx Code - diagnosis code needs verification\nPrior Auth Questions:\n• Is the diagnosis code correct for cancer staging?\n• Does the code match the clinical indication?\n\n1/19 Verified with provider - updating dx code and resubmitting",
+            "detailsText": "Details: Date: 01/17/2026, Initials: RW-P, As per Insurance Aetna Choice PPO- Active (01/01/2026),\nPET/CT Skull Base to Mid Thigh (78815) auth required\nAuth status: Invalid Dx Code - diagnosis code needs verification\nPrior Auth Questions:\n\u2022 Is the diagnosis code correct for cancer staging?\n\u2022 Does the code match the clinical indication?\n\n1/19 Verified with provider - updating dx code and resubmitting",
             "authCases": [
               {
                 "id": "1",
@@ -697,7 +780,8 @@
           "type": "Imaging Report",
           "fetchedDate": "2026-01-17T08:30:00Z",
           "source": "PACS System",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/imaging-reports.pdf"
         },
         {
           "id": "DOC-007-2",
@@ -705,7 +789,8 @@
           "type": "Imaging Report",
           "fetchedDate": "2026-01-17T08:35:00Z",
           "source": "PACS System",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/imaging-reports.pdf"
         },
         {
           "id": "DOC-007-3",
@@ -713,7 +798,8 @@
           "type": "Imaging Report",
           "fetchedDate": "2026-01-17T08:40:00Z",
           "source": "PACS System",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/imaging-reports.pdf"
         },
         {
           "id": "DOC-007-4",
@@ -721,7 +807,8 @@
           "type": "Imaging Report",
           "fetchedDate": "2026-01-17T08:45:00Z",
           "source": "PACS System",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/imaging-reports.pdf"
         },
         {
           "id": "DOC-007-5",
@@ -729,7 +816,8 @@
           "type": "Lab Report",
           "fetchedDate": "2026-01-17T08:50:00Z",
           "source": "Lab Portal",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/lab-reports.pdf"
         },
         {
           "id": "DOC-007-6",
@@ -737,7 +825,8 @@
           "type": "Lab Report",
           "fetchedDate": "2026-01-17T08:55:00Z",
           "source": "Lab Portal",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/lab-reports.pdf"
         },
         {
           "id": "DOC-007-7",
@@ -745,7 +834,8 @@
           "type": "Clinical Notes",
           "fetchedDate": "2026-01-17T09:00:00Z",
           "source": "EHR System",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/clinical-notes.pdf"
         }
       ]
     },
@@ -760,7 +850,10 @@
       "order": {
         "imagingType": "CT Chest & Abdomen W Contrast",
         "imagingModality": "CT",
-        "cptCodes": ["71260", "74160"],
+        "cptCodes": [
+          "71260",
+          "74160"
+        ],
         "dateOfService": "2026-02-21",
         "orderingProvider": {
           "name": "Dr. Roy Chen",
@@ -782,8 +875,14 @@
         "priorAuthRequired": true,
         "referralRequired": false,
         "financials": {
-          "deductible": { "total": 900, "used": 500 },
-          "outOfPocket": { "total": 2500, "used": 1300 },
+          "deductible": {
+            "total": 900,
+            "used": 500
+          },
+          "outOfPocket": {
+            "total": 2500,
+            "used": 1300
+          },
           "copay": 0,
           "coinsurance": "15%"
         }
@@ -797,7 +896,7 @@
         "entries": [
           {
             "date": "01/20/2026",
-            "detailsText": "Details: Date: 01/19/2026, Initials: AV-RC, As per Insurance BCBS PPO Blue- Active (01/01/2026),\nCT Chest & Abdomen W Contrast (71260, 74160)\nAuth status: PA Submitted - pending review\nSubmitted 01/19/2026, reference #PA-2026-089234\nExpected turnaround: 3-5 business days\nPrior Auth Questions:\n• Clinical indication documented?\n• All supporting documents attached?\n\n1/20 PA successfully submitted, tracking with payer for decision",
+            "detailsText": "Details: Date: 01/19/2026, Initials: AV-RC, As per Insurance BCBS PPO Blue- Active (01/01/2026),\nCT Chest & Abdomen W Contrast (71260, 74160)\nAuth status: PA Submitted - pending review\nSubmitted 01/19/2026, reference #PA-2026-089234\nExpected turnaround: 3-5 business days\nPrior Auth Questions:\n\u2022 Clinical indication documented?\n\u2022 All supporting documents attached?\n\n1/20 PA successfully submitted, tracking with payer for decision",
             "authCases": [
               {
                 "id": "1",
@@ -831,7 +930,8 @@
           "type": "Imaging Report",
           "fetchedDate": "2026-01-19T15:10:00Z",
           "source": "PACS System",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/imaging-reports.pdf"
         },
         {
           "id": "DOC-008-2",
@@ -839,7 +939,8 @@
           "type": "Imaging Report",
           "fetchedDate": "2026-01-19T15:15:00Z",
           "source": "PACS System",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/imaging-reports.pdf"
         },
         {
           "id": "DOC-008-3",
@@ -847,7 +948,8 @@
           "type": "Imaging Report",
           "fetchedDate": "2026-01-19T15:20:00Z",
           "source": "PACS System",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/imaging-reports.pdf"
         },
         {
           "id": "DOC-008-4",
@@ -855,7 +957,8 @@
           "type": "Clinical Notes",
           "fetchedDate": "2026-01-19T15:25:00Z",
           "source": "EHR System",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/clinical-notes.pdf"
         }
       ]
     },
@@ -870,8 +973,12 @@
       "order": {
         "imagingType": "MRI Brain W & W/O Contrast",
         "imagingModality": "MRI",
-        "cptCodes": ["70553"],
-        "diagnosisCodes": ["G43.909"],
+        "cptCodes": [
+          "70553"
+        ],
+        "diagnosisCodes": [
+          "G43.909"
+        ],
         "dateOfService": "2026-02-25",
         "orderingProvider": {
           "name": "Dr. Michael Stevens",
@@ -893,8 +1000,14 @@
         "priorAuthRequired": true,
         "referralRequired": false,
         "financials": {
-          "deductible": { "total": 1000, "used": 250 },
-          "outOfPocket": { "total": 2500, "used": 800 },
+          "deductible": {
+            "total": 1000,
+            "used": 250
+          },
+          "outOfPocket": {
+            "total": 2500,
+            "used": 800
+          },
           "copay": 0,
           "coinsurance": "20%"
         }
@@ -907,7 +1020,7 @@
         "entries": [
           {
             "date": "01/22/2026",
-            "detailsText": "Details: Date: 01/22/2026, Initials: JM-S, As per Insurance Aetna Choice PPO- Active (01/01/2026),\nMRI Brain W & W/O Contrast (70553) for G43.909 (Migraine)\nAuth status: PA Ordered - ready to file\nAll documentation collected and reviewed\nPrior Auth Questions:\n• Has patient tried conservative treatments?\n• Are there red flag symptoms present?\n\n1/22 All criteria met, ready to submit PA",
+            "detailsText": "Details: Date: 01/22/2026, Initials: JM-S, As per Insurance Aetna Choice PPO- Active (01/01/2026),\nMRI Brain W & W/O Contrast (70553) for G43.909 (Migraine)\nAuth status: PA Ordered - ready to file\nAll documentation collected and reviewed\nPrior Auth Questions:\n\u2022 Has patient tried conservative treatments?\n\u2022 Are there red flag symptoms present?\n\n1/22 All criteria met, ready to submit PA",
             "authCases": [
               {
                 "id": "1",
@@ -934,7 +1047,8 @@
           "type": "Clinical Notes",
           "fetchedDate": "2026-01-22T09:30:00Z",
           "source": "EHR System",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/clinical-notes.pdf"
         },
         {
           "id": "DOC-009-2",
@@ -942,7 +1056,8 @@
           "type": "Referral",
           "fetchedDate": "2026-01-22T09:35:00Z",
           "source": "EHR System",
-          "status": "Retrieved"
+          "status": "Retrieved",
+          "url": "/documents/referral-documents.pdf"
         }
       ]
     }

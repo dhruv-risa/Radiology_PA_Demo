@@ -1,16 +1,14 @@
 import { useNavigate, useParams } from 'react-router-dom'
 import { getOrderByMRN } from '../../../utils/patientDataHelpers'
+import { useState } from 'react'
+import DocumentModal from '../../common/DocumentModal'
 
 export default function AuthLetters() {
   const navigate = useNavigate()
   const { id } = useParams()
   const orderData = getOrderByMRN(id!)
-
-  // Only show letters for RAD-001 to RAD-004
-  const orderNumber = orderData ? parseInt(orderData.orderId.split('-')[1]) : 0
-  const letters = orderNumber <= 4
-    ? [{ dateCreated: '12/11/2025', documentName: 'AUTH LETTER' }]
-    : []
+  const [isDocumentModalOpen, setIsDocumentModalOpen] = useState(false)
+  const [currentDocument, setCurrentDocument] = useState({ title: '', url: '' })
 
   const hasIssues = orderData?.paStatus.automationStatus === 'Blocked'
   const paStatus = orderData?.paStatus
@@ -20,6 +18,37 @@ export default function AuthLetters() {
 
   // Check if PA has been filed (either via paFiled flag or localStorage submission)
   const isPAFiled = paStatus?.paFiled || (orderData ? localStorage.getItem(`pa-submission-${orderData.orderId}`) !== null : false)
+
+  // Get payer-specific auth letter path
+  const getAuthLetterPath = (payerName: string): string => {
+    const payerMap: Record<string, string> = {
+      'Aetna': '/documents/auth-letter-aetna.pdf',
+      'BCBS': '/documents/auth-letter-bcbs.pdf',
+      'Cigna': '/documents/auth-letter-cigna.pdf'
+    }
+    return payerMap[payerName] || '/documents/auth-letter-aetna.pdf'
+  }
+
+  // Show auth letter for RAD-001 to RAD-004
+  const orderNumber = orderData ? parseInt(orderData.orderId.split('-')[1]) : 0
+  const showAuthLetter = orderData && orderNumber >= 1 && orderNumber <= 4
+
+  const authLetterDate = new Date(2025, 11, 11).toLocaleDateString('en-US', {
+    month: '2-digit',
+    day: '2-digit',
+    year: 'numeric'
+  })
+
+  const handleViewAuthLetter = () => {
+    if (orderData) {
+      const authLetterPath = getAuthLetterPath(orderData.payer.name)
+      setCurrentDocument({
+        title: `${orderData.payer.name} Authorization Letter`,
+        url: authLetterPath
+      })
+      setIsDocumentModalOpen(true)
+    }
+  }
 
   const handleMarkComplete = () => {
     if (orderData) {
@@ -31,7 +60,7 @@ export default function AuthLetters() {
   return (
     <div className="pb-24">
       <div className="bg-white border rounded-lg overflow-hidden">
-        {letters.length > 0 ? (
+        {showAuthLetter ? (
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b">
               <tr>
@@ -41,15 +70,18 @@ export default function AuthLetters() {
               </tr>
             </thead>
             <tbody>
-              {letters.map((letter, index) => (
-                <tr key={index} className="border-b hover:bg-gray-50">
-                  <td className="px-6 py-4">{letter.dateCreated}</td>
-                  <td className="px-6 py-4">{letter.documentName}</td>
-                  <td className="px-6 py-4 text-right">
-                    <button className="text-blue-600 hover:underline font-medium">View</button>
-                  </td>
-                </tr>
-              ))}
+              <tr className="border-b hover:bg-gray-50">
+                <td className="px-6 py-4">{authLetterDate}</td>
+                <td className="px-6 py-4">{orderData?.payer.name} Authorization Letter</td>
+                <td className="px-6 py-4 text-right">
+                  <button
+                    onClick={handleViewAuthLetter}
+                    className="text-blue-600 hover:underline font-medium"
+                  >
+                    View
+                  </button>
+                </td>
+              </tr>
             </tbody>
           </table>
         ) : (
@@ -58,13 +90,21 @@ export default function AuthLetters() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
             <p className="text-gray-500 text-sm">No authorization letters available</p>
+            <p className="text-gray-400 text-xs mt-2">Authorization letters will appear after PA is filed or approved</p>
           </div>
         )}
       </div>
 
+      <DocumentModal
+        isOpen={isDocumentModalOpen}
+        onClose={() => setIsDocumentModalOpen(false)}
+        title={currentDocument.title}
+        documentUrl={currentDocument.url}
+      />
+
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t px-6 py-4 flex justify-end gap-3 z-20">
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => navigate(`/patient/${id}/ev`)}
           className="px-6 py-2 text-sm border border-gray-300 rounded hover:bg-gray-50"
         >
           Go Back

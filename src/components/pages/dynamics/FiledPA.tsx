@@ -329,7 +329,7 @@ export default function FiledPA() {
       {/* Bottom Navigation Bar */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t px-6 py-4 flex justify-end gap-3 z-20">
         <button
-          onClick={() => navigate('/')}
+          onClick={() => navigate(`/patient/${id}/ev`)}
           className="px-6 py-2 text-sm border border-gray-300 rounded hover:bg-gray-50"
         >
           Go Back

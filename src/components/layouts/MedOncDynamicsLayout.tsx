@@ -136,11 +136,11 @@ export default function MedOncDynamicsLayout() {
   const getPayerNARGridPath = (payerName: string): string => {
     // Map payer names to their NAR grid PDF files
     const payerMap: Record<string, string> = {
-      'Aetna': '/documents/payer-guidelines-aetna.pdf',
-      'BCBS': '/documents/payer-guidelines-bcbs.pdf',
-      'Cigna': '/documents/payer-guidelines-cigna.pdf'
+      'Aetna': '/documents/nar-grid-aetna.pdf',
+      'BCBS': '/documents/nar-grid-bcbs.pdf',
+      'Cigna': '/documents/nar-grid-cigna.pdf'
     }
-    return payerMap[payerName] || '/documents/payer-guidelines-aetna.pdf'
+    return payerMap[payerName] || '/documents/nar-grid-aetna.pdf'
   }
 
   const handleViewOncoEMR = () => {

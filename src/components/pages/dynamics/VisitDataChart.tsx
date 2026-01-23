@@ -1,7 +1,8 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 export default function VisitDataChart() {
   const navigate = useNavigate()
+  const { id } = useParams()
 
   const data = [
     { date: '10/13/2025', planned: '100mg', actual: '100mg', cumDose: '100 mg', doseDensity: '100,000 mg/day' },
@@ -48,7 +49,7 @@ export default function VisitDataChart() {
 
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t px-6 py-4 flex justify-between z-20">
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => navigate(`/patient/${id}/ev`)}
           className="px-6 py-2 text-sm border border-gray-300 rounded hover:bg-gray-50"
         >
           Go Back
