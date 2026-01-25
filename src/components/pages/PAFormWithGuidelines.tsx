@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { RadiologyPAOrder, Document, getOrderByMRN } from '../../utils/patientDataHelpers'
+import { Document, getOrderByMRN } from '../../utils/patientDataHelpers'
 import { getIcdDescription } from '../../utils/icdCodes'
 import { PAFormData } from '../common/PAForm'
 
@@ -184,7 +184,7 @@ export default function PAFormWithGuidelines() {
           </div>
           <div className="flex-1 overflow-hidden">
             <iframe
-              src="/documents/Guideline.pdf#view=FitH&pagemode=none&navpanes=0&toolbar=1"
+              src={id === '4053541' ? "/documents/PET_Guideline_Aetna.pdf#view=FitH&pagemode=none&navpanes=0&toolbar=1" : "/documents/Guideline.pdf#view=FitH&pagemode=none&navpanes=0&toolbar=1"}
               className="w-full h-full border-0"
               title="Clinical Guidelines"
             />
