@@ -106,6 +106,15 @@
           "source": "PACS System",
           "status": "Retrieved",
           "url": "/documents/Masked_MRI.pdf"
+        },
+        {
+          "id": "DOC-001-4",
+          "name": "Clinical Guidelines",
+          "type": "Clinical Guideline",
+          "fetchedDate": "2026-03-03T10:00:00Z",
+          "source": "Payer Portal",
+          "status": "Retrieved",
+          "url": "/documents/Guideline_1.pdf"
         }
       ]
     },
@@ -202,6 +211,15 @@
           "source": "PACS System",
           "status": "Not Available",
           "url": "/documents/Masked_MRI.pdf"
+        },
+        {
+          "id": "DOC-002-3",
+          "name": "Clinical Guidelines",
+          "type": "Clinical Guideline",
+          "fetchedDate": "2026-03-03T10:00:00Z",
+          "source": "Payer Portal",
+          "status": "Retrieved",
+          "url": "/documents/Guideline_3.pdf"
         }
       ]
     },
@@ -298,6 +316,15 @@
           "source": "PT Portal",
           "status": "Retrieved",
           "url": "/documents/Masked_MD_Notes.pdf"
+        },
+        {
+          "id": "DOC-003-3",
+          "name": "Clinical Guidelines",
+          "type": "Clinical Guideline",
+          "fetchedDate": "2026-03-03T10:00:00Z",
+          "source": "Payer Portal",
+          "status": "Retrieved",
+          "url": "/documents/Guideline_1.pdf"
         }
       ]
     },
@@ -403,6 +430,15 @@
           "source": "Lab Portal",
           "status": "Retrieved",
           "url": "/documents/Masked_Lab_results.pdf"
+        },
+        {
+          "id": "DOC-004-4",
+          "name": "Clinical Guidelines",
+          "type": "Clinical Guideline",
+          "fetchedDate": "2026-03-03T10:00:00Z",
+          "source": "Payer Portal",
+          "status": "Retrieved",
+          "url": "/documents/Guideline_4.pdf"
         }
       ]
     },
@@ -509,6 +545,15 @@
           "source": "EHR System",
           "status": "Retrieved",
           "url": "/documents/Masked_Clinical_Summary.pdf"
+        },
+        {
+          "id": "DOC-005-4",
+          "name": "Clinical Guidelines",
+          "type": "Clinical Guideline",
+          "fetchedDate": "2026-03-03T10:00:00Z",
+          "source": "Payer Portal",
+          "status": "Retrieved",
+          "url": "/documents/Guideline_2.pdf"
         }
       ]
     },
@@ -606,6 +651,15 @@
           "source": "EHR System",
           "status": "Retrieved",
           "url": "/documents/Masked_MD_Notes.pdf"
+        },
+        {
+          "id": "DOC-006-3",
+          "name": "Clinical Guidelines",
+          "type": "Clinical Guideline",
+          "fetchedDate": "2026-03-03T10:00:00Z",
+          "source": "Payer Portal",
+          "status": "Retrieved",
+          "url": "/documents/Guideline_2.pdf"
         }
       ]
     },
@@ -728,6 +782,15 @@
           "source": "EHR System",
           "status": "Retrieved",
           "url": "/documents/Masked_MD_Notes.pdf"
+        },
+        {
+          "id": "DOC-007-5",
+          "name": "Clinical Guidelines",
+          "type": "Clinical Guideline",
+          "fetchedDate": "2026-03-03T10:00:00Z",
+          "source": "Payer Portal",
+          "status": "Retrieved",
+          "url": "/documents/Guideline_4.pdf"
         }
       ]
     },
@@ -832,6 +895,15 @@
           "source": "EHR System",
           "status": "Retrieved",
           "url": "/documents/Masked_MD_Notes.pdf"
+        },
+        {
+          "id": "DOC-008-3",
+          "name": "Clinical Guidelines",
+          "type": "Clinical Guideline",
+          "fetchedDate": "2026-03-03T10:00:00Z",
+          "source": "Payer Portal",
+          "status": "Retrieved",
+          "url": "/documents/Guideline_2.pdf"
         }
       ]
     },
@@ -964,12 +1036,12 @@
         },
         {
           "id": "DOC-009-6",
-          "name": "PET Guidelines",
+          "name": "Clinical Guidelines",
           "type": "Clinical Guideline",
           "fetchedDate": "2026-03-03T10:00:00Z",
           "source": "Payer Portal",
           "status": "Retrieved",
-          "url": "/documents/PET_Guideline_Aetna.pdf"
+          "url": "/documents/Guideline_4.pdf"
         }
       ]
     },

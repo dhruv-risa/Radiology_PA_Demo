@@ -1,9 +1,19 @@
 import { useNavigate, useParams } from 'react-router-dom'
 import { getOrderByMRN } from '../../utils/patientDataHelpers'
+import { useState } from 'react'
 
 export default function PatientEV() {
   const navigate = useNavigate()
   const { id } = useParams()
+  const [showReportModal, setShowReportModal] = useState(false)
+  const [showValidateModal, setShowValidateModal] = useState(false)
+  const [inaccuracyFields, setInaccuracyFields] = useState({
+    copay: false,
+    coInsurance: false,
+    deductibles: false,
+    outOfPockets: false
+  })
+  const [comments, setComments] = useState('')
 
   // Get order data using MRN from URL params
   const orderData = getOrderByMRN(id!)
@@ -14,6 +24,43 @@ export default function PatientEV() {
 
   const handleContinue = () => {
     navigate(`/patient/${id}/dynamics`)
+  }
+
+  const handleValidate = () => {
+    setShowValidateModal(true)
+  }
+
+  const handleCloseValidateModal = () => {
+    setShowValidateModal(false)
+  }
+
+  const handleReportInaccuracy = () => {
+    setShowReportModal(true)
+  }
+
+  const handleCloseModal = () => {
+    setShowReportModal(false)
+    setInaccuracyFields({
+      copay: false,
+      coInsurance: false,
+      deductibles: false,
+      outOfPockets: false
+    })
+    setComments('')
+  }
+
+  const handleSaveInaccuracy = () => {
+    // Handle save logic here
+    console.log('Inaccuracy Fields:', inaccuracyFields)
+    console.log('Comments:', comments)
+    handleCloseModal()
+  }
+
+  const handleCheckboxChange = (field: keyof typeof inaccuracyFields) => {
+    setInaccuracyFields(prev => ({
+      ...prev,
+      [field]: !prev[field]
+    }))
   }
 
   // Show loading/error state if no order data
@@ -52,6 +99,18 @@ export default function PatientEV() {
             <h1 className="text-lg font-semibold">{patient.name.toUpperCase()} ({patient.mrn})</h1>
           </div>
           <div className="flex gap-3">
+            <button
+              onClick={handleValidate}
+              className="px-4 py-2 text-sm text-blue-600 border border-blue-600 rounded hover:bg-blue-50"
+            >
+              Validate
+            </button>
+            <button
+              onClick={handleReportInaccuracy}
+              className="px-4 py-2 text-sm text-red-600 border border-red-600 rounded hover:bg-red-50"
+            >
+              Report Inaccuracy
+            </button>
             <button className="p-1.5 hover:bg-gray-100 rounded">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -278,6 +337,196 @@ export default function PatientEV() {
           Continue
         </button>
       </div>
+
+      {/* Validate Modal */}
+      {showValidateModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-hidden flex flex-col">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-6 border-b">
+              <h2 className="text-xl font-semibold">Eligibility Verification Data (JSON)</h2>
+              <button
+                onClick={handleCloseValidateModal}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 overflow-y-auto">
+              <pre className="bg-gray-50 p-4 rounded-lg overflow-x-auto text-sm">
+                {JSON.stringify({
+                  patient: {
+                    name: patient.name,
+                    mrn: patient.mrn,
+                    dob: patient.dob,
+                    memberId: patient.memberId
+                  },
+                  order: {
+                    imagingType: order.imagingType,
+                    imagingModality: order.imagingModality,
+                    cptCodes: order.cptCodes,
+                    diagnosisCodes: order.diagnosisCodes,
+                    dateOfService: order.dateOfService,
+                    orderingProvider: {
+                      name: provider.name,
+                      npi: provider.npi,
+                      networkStatus: provider.networkStatus
+                    }
+                  },
+                  payer: {
+                    name: payer.name,
+                    planName: payer.planName,
+                    planType: payer.planType,
+                    status: payer.status,
+                    effectiveDate: payer.effectiveDate,
+                    endDate: payer.endDate
+                  },
+                  eligibilityVerification: {
+                    serviceTypeCode: eligibility.serviceTypeCode,
+                    covered: eligibility.covered,
+                    priorAuthRequired: eligibility.priorAuthRequired,
+                    referralRequired: eligibility.referralRequired,
+                    financials: {
+                      deductible: {
+                        total: eligibility.financials.deductible.total,
+                        used: eligibility.financials.deductible.used,
+                        remaining: deductibleRemaining
+                      },
+                      outOfPocket: {
+                        total: eligibility.financials.outOfPocket.total,
+                        used: eligibility.financials.outOfPocket.used,
+                        remaining: outOfPocketRemaining
+                      },
+                      copay: eligibility.financials.copay,
+                      coinsurance: eligibility.financials.coinsurance
+                    }
+                  }
+                }, null, 2)}
+              </pre>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-6 border-t">
+              <button
+                onClick={handleCloseValidateModal}
+                className="w-full px-6 py-3 text-base bg-black text-white rounded hover:bg-gray-800"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Report Inaccuracy Modal */}
+      {showReportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-6 border-b">
+              <h2 className="text-xl font-semibold">Report Inaccuracy</h2>
+              <button
+                onClick={handleCloseModal}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6">
+              <h3 className="text-base font-medium mb-4">Which Fields have Inaccuracy</h3>
+
+              {/* Checkboxes */}
+              <div className="space-y-4 mb-6">
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="copay"
+                    checked={inaccuracyFields.copay}
+                    onChange={() => handleCheckboxChange('copay')}
+                    className="w-5 h-5 border-2 border-gray-300 rounded"
+                  />
+                  <label htmlFor="copay" className="ml-3 text-base">Copay</label>
+                </div>
+                <div className="border-t border-dotted border-gray-300"></div>
+
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="coInsurance"
+                    checked={inaccuracyFields.coInsurance}
+                    onChange={() => handleCheckboxChange('coInsurance')}
+                    className="w-5 h-5 border-2 border-gray-300 rounded"
+                  />
+                  <label htmlFor="coInsurance" className="ml-3 text-base">Co Insurance</label>
+                </div>
+                <div className="border-t border-dotted border-gray-300"></div>
+
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="deductibles"
+                    checked={inaccuracyFields.deductibles}
+                    onChange={() => handleCheckboxChange('deductibles')}
+                    className="w-5 h-5 border-2 border-gray-300 rounded"
+                  />
+                  <label htmlFor="deductibles" className="ml-3 text-base">Deductibles</label>
+                </div>
+                <div className="border-t border-dotted border-gray-300"></div>
+
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="outOfPockets"
+                    checked={inaccuracyFields.outOfPockets}
+                    onChange={() => handleCheckboxChange('outOfPockets')}
+                    className="w-5 h-5 border-2 border-gray-300 rounded"
+                  />
+                  <label htmlFor="outOfPockets" className="ml-3 text-base">Out of Pockets</label>
+                </div>
+              </div>
+
+              {/* Comments Section */}
+              <div className="mb-6">
+                <label htmlFor="comments" className="block text-base font-medium mb-2">
+                  Comments
+                </label>
+                <textarea
+                  id="comments"
+                  value={comments}
+                  onChange={(e) => setComments(e.target.value)}
+                  placeholder="Enter your general comments here"
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-3">
+                <button
+                  onClick={handleCloseModal}
+                  className="flex-1 px-6 py-3 text-base border border-gray-300 rounded hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveInaccuracy}
+                  className="flex-1 px-6 py-3 text-base bg-black text-white rounded hover:bg-gray-800"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
